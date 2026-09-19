@@ -353,12 +353,14 @@ button,input,select,textarea { font:inherit}
 .aboutIcon { display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:12px; background:#eef4ff; font-size:22px; border:1px solid #d9e6fa}
 .aboutCard h2 { font-size:20px; margin:0; color:var(--ink); font-weight:750}
 .aboutCard p { color:var(--muted); line-height:1.7; font-size:14.5px; margin:0}
-.aboutCtaBanner { background:linear-gradient(135deg,#1646b5 0%,#3b7bf5 100%); color:white; border-radius:24px; padding:36px 32px; display:flex; justify-content:space-between; align-items:center; gap:24px; box-shadow:0 14px 36px rgba(36,96,217,.22); flex-wrap:wrap}
-.aboutCtaBanner h3 { font-size:24px; margin:0 0 6px}
-.aboutCtaBanner p { color:#dce7ff; margin:0; font-size:15px}
-.aboutCtaActions { display:flex; gap:12px; flex-wrap:wrap}
-.aboutCtaActions .secondaryButton { background:rgba(255,255,255,.15); color:white; border-color:rgba(255,255,255,.3); backdrop-filter:blur(8px)}
-.aboutCtaActions .secondaryButton:hover { background:white; color:var(--blue)}
+.aboutCtaBanner { background:linear-gradient(135deg,#123ea3 0%,#2a6ce4 100%); color:white; border-radius:24px; padding:36px 36px; display:flex; justify-content:space-between; align-items:center; gap:24px; box-shadow:0 16px 40px rgba(18,62,163,.25); flex-wrap:wrap; border:1px solid rgba(255,255,255,.15); position:relative; overflow:hidden}
+.aboutCtaBanner h3 { font-size:26px; margin:0 0 6px; font-weight:800; letter-spacing:-.02em}
+.aboutCtaBanner p { color:#e3edff; margin:0; font-size:15.5px}
+.aboutCtaActions { display:flex; gap:14px; flex-wrap:wrap; align-items:center}
+.aboutCtaActions .primaryButton { background:#ffffff; color:#144ec4; font-weight:750; box-shadow:0 6px 18px rgba(0,0,0,.16); border:1.5px solid transparent}
+.aboutCtaActions .primaryButton:hover { background:#f4f8ff; color:#0e3a98; transform:translateY(-2px); box-shadow:0 10px 26px rgba(0,0,0,.24)}
+.aboutCtaActions .secondaryButton { background:rgba(255,255,255,.12); color:#ffffff; font-weight:750; border:1.5px solid rgba(255,255,255,.75); backdrop-filter:blur(10px); box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.aboutCtaActions .secondaryButton:hover { background:#ffffff; color:#144ec4; border-color:#ffffff; transform:translateY(-2px); box-shadow:0 10px 26px rgba(0,0,0,.2)}
 .contactPageSection { background:linear-gradient(180deg,#f8faff 0%,#ffffff 480px); padding-bottom:88px}
 .contactHeader { max-width:760px; margin-bottom:44px}
 .contactBadgeRow { display:flex; align-items:center; gap:12px; margin-bottom:16px; flex-wrap:wrap}
