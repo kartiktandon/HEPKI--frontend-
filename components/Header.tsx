@@ -19,8 +19,16 @@ export default function Header() {
   }, [pathname]);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const isOver = window.scrollY > 10;
+          setScrolled(prev => (prev !== isOver ? isOver : prev));
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
