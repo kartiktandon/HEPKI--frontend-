@@ -8,12 +8,48 @@ export default function DiscoveryServiceCard({ service }: { service: RecordData 
   const images = Array.isArray(service.images) ? service.images.map(record) : [];
   const image = safeImage(service.image ?? service.icon ?? images.find(value => value.isPrimary)?.url ?? images[0]?.url);
   const price = servicePrice(service);
-  return <article className="categoryCard discoveryCard">
-    <div className="categoryImage"><CategoryImage src={image} alt={text(service.serviceName ?? service.name, 'Service')} /></div>
-    <div className="categoryBody">
-      <h3>{text(service.serviceName ?? service.name, 'Service')}</h3>
-      <p>{text(service.description, 'Choose a time and address that works for you.')}</p>
-      <div className="cardFooter"><strong>{price !== undefined ? `From ${money(price)}${service.pricingType === 'hourly' ? '/hr' : ''}` : 'View service'}</strong><Link href={categoryId ? `/book?category=${encodeURIComponent(categoryId)}` : '/book'}>Book →</Link></div>
-    </div>
-  </article>;
+  const serviceName = text(service.serviceName ?? service.name, 'Service');
+  const minDuration = typeof service.minDurationHours === 'number' || typeof service.minDurationHours === 'string'
+    ? String(service.minDurationHours)
+    : '';
+  const isHourly = service.pricingType === 'hourly';
+
+  return (
+    <article className="categoryCard discoveryCard">
+      <div className="categoryImage">
+        <CategoryImage src={image} alt={serviceName} />
+        <span className="discoveryTagBadge">
+          <span className="trendingFlame">⚡</span> Popular
+        </span>
+      </div>
+      <div className="categoryBody">
+        <div className="discoveryMetaRow">
+          {minDuration ? (
+            <span className="discoveryPill duration">
+              ⏱ {minDuration}h min
+            </span>
+          ) : null}
+          <span className="discoveryPill type">
+            {isHourly ? 'Hourly Rate' : 'Fixed Price'}
+          </span>
+        </div>
+        <h3>{serviceName}</h3>
+        <p>{text(service.description, 'Book verified assistance for this service on your preferred schedule.')}</p>
+        <div className="cardFooter">
+          <div className="discoveryPriceCol">
+            <span className="discoveryPriceLabel">Starting from</span>
+            <strong className="discoveryPriceVal">
+              {price !== undefined ? `${money(price)}${isHourly ? '/hr' : ''}` : 'View service'}
+            </strong>
+          </div>
+          <Link
+            href={categoryId ? `/book?category=${encodeURIComponent(categoryId)}` : '/book'}
+            className="discoveryBookBtn"
+          >
+            Book <span className="btnArrow">→</span>
+          </Link>
+        </div>
+      </div>
+    </article>
+  );
 }

@@ -15,11 +15,79 @@ export default function RecommendedServices() {
   const services = useResource(user && categoryId ? `/api/v1/user/services?categoryId=${encodeURIComponent(categoryId)}` : null);
   const matches = list(services.data, 'services');
   const recommendations = matches.length ? matches : list(services.data);
-  if (loading) return <p role="status">Checking your account…</p>;
-  if (!user) return <div className="discoveryPrompt"><p>Sign in to see services based on your past bookings.</p><Link className="secondaryButton" href="/auth?next=%2F">Log in</Link></div>;
-  return <div className="stack"><ErrorNotice message={bookings.error} retry={bookings.reload}/><ErrorNotice message={services.error} retry={services.reload}/>
-    {(bookings.loading || services.loading) && <p role="status">Finding services for you…</p>}
-    {!bookings.loading && !bookings.error && !categoryId && <p className="emptyState">After your first booking, services from that category will appear here.</p>}
-    {categoryId && !services.loading && !services.error && (recommendations.length ? <div className="categoryGrid">{recommendations.slice(0, 4).map((service, index) => <DiscoveryServiceCard key={id(service) || index} service={service}/>)}</div> : <p className="emptyState">No active services in your recent category right now.</p>)}
-  </div>;
+
+  if (loading) {
+    return (
+      <div className="nearbyLoadingBox">
+        <span className="spinner"></span>
+        <p>Loading your recommendations…</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="discoveryPrompt">
+        <div className="discoveryPromptContent">
+          <div className="discoveryPromptIcon">✨</div>
+          <div>
+            <h3>Personalized Service Recommendations</h3>
+            <p>Sign in to view curated services and smart rebooking suggestions tailored to your history.</p>
+          </div>
+        </div>
+        <div className="discoveryPromptActions">
+          <Link className="primaryButton" href="/auth?next=%2F">
+            Sign In to View <span className="btnArrow">→</span>
+          </Link>
+          <Link className="secondaryButton" href="/categories">
+            Browse All Services
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="stack">
+      <ErrorNotice message={bookings.error} retry={bookings.reload} />
+      <ErrorNotice message={services.error} retry={services.reload} />
+
+      {(bookings.loading || services.loading) && (
+        <div className="nearbyLoadingBox">
+          <span className="spinner"></span>
+          <p>Finding recommended services for you…</p>
+        </div>
+      )}
+
+      {!bookings.loading && !bookings.error && !categoryId && (
+        <div className="discoveryEmptyCard">
+          <span className="emptyCardIcon">💡</span>
+          <h4>No booking history yet</h4>
+          <p>Once you complete your first booking, custom suggestions and favorite services will appear here for fast re-booking.</p>
+          <Link href="/categories" className="primaryButton small">
+            Explore Categories <span className="btnArrow">→</span>
+          </Link>
+        </div>
+      )}
+
+      {categoryId && !services.loading && !services.error && (
+        recommendations.length ? (
+          <div className="categoryGrid">
+            {recommendations.slice(0, 4).map((service, index) => (
+              <DiscoveryServiceCard key={id(service) || index} service={service} />
+            ))}
+          </div>
+        ) : (
+          <div className="discoveryEmptyCard">
+            <span className="emptyCardIcon">📂</span>
+            <h4>No active services in this category</h4>
+            <p>Check out our other trending categories for everyday assistance.</p>
+            <Link href="/categories" className="secondaryButton">
+              View All Categories
+            </Link>
+          </div>
+        )
+      )}
+    </div>
+  );
 }
