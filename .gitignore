@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Next.js and generated output
+.next/
+.next-*/
+out/
+build/
+dist/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# Local environment variables (keep the setup template)
+.env*
+!.env.example
+
+# Logs and local deployment metadata
+*.log
+.vercel/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
