@@ -181,26 +181,51 @@ button,input,select,textarea { font:inherit}
 .aboutCtaActions { display:flex; gap:12px; flex-wrap:wrap}
 .aboutCtaActions .secondaryButton { background:rgba(255,255,255,.15); color:white; border-color:rgba(255,255,255,.3); backdrop-filter:blur(8px)}
 .aboutCtaActions .secondaryButton:hover { background:white; color:var(--blue)}
-.contactGrid { display:grid; grid-template-columns:1fr 1fr; gap:44px; align-items:start}
-.contactHighlightCard { background:linear-gradient(135deg,#f5f8ff 0%,#edf3fe 100%); border:1px solid #d5e5fb; border-radius:20px; padding:24px; display:flex; gap:16px; margin-top:28px; box-shadow:0 8px 24px rgba(36,96,217,.06)}
-.contactHighlightIcon { font-size:24px; flex-shrink:0}
-.contactHighlightCard h3 { margin:0 0 6px; font-size:17px; color:var(--ink)}
-.contactHighlightCard p { margin:0 0 16px; font-size:13.5px; color:var(--muted); line-height:1.6}
-.contactCardsWrap { background:white; border:1px solid #e5ecf6; border-radius:24px; padding:32px; box-shadow:0 10px 30px rgba(33,54,94,.06)}
-.contactCardsWrap h2 { margin:0 0 20px; font-size:22px}
-.contactChannels { display:flex; flex-direction:column; gap:14px}
-.channelCard { display:flex; align-items:center; gap:16px; padding:18px 20px; border:1px solid #e7ecf5; border-radius:18px; text-decoration:none; color:inherit; background:#ffffff; transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
-a.channelCard:hover { transform:translateX(4px); border-color:#b9d2fa; box-shadow:0 8px 20px rgba(36,96,217,.08)}
-.channelIcon { width:48px; height:48px; min-width:48px; min-height:48px; border-radius:14px; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; box-sizing:border-box; position:relative; overflow:hidden; transition:transform .2s ease,box-shadow .2s ease,background .2s ease,color .2s ease}
-.channelIcon svg { display:block; width:22px; height:22px; min-width:22px; min-height:22px; max-width:22px; max-height:22px; margin:auto; flex-shrink:0; stroke:currentColor}
-.emailChannel { background:linear-gradient(135deg,#eef4ff 0%,#e1edff 100%); color:#2460d9; border:1px solid #d0e0fb; box-shadow:0 4px 12px rgba(36,96,217,.08)}
-.phoneChannel { background:linear-gradient(135deg,#ecfdf5 0%,#d1fae5 100%); color:#059669; border:1px solid #a7f3d0; box-shadow:0 4px 12px rgba(5,150,105,.08)}
-.mapChannel { background:linear-gradient(135deg,#f5f3ff 0%,#ede9fe 100%); color:#7c3aed; border:1px solid #ddd6fe; box-shadow:0 4px 12px rgba(124,58,237,.08)}
-a.channelCard:hover .emailChannel { background:#2460d9; color:white; border-color:#2460d9; transform:scale(1.08); box-shadow:0 8px 18px rgba(36,96,217,.25)}
-a.channelCard:hover .phoneChannel { background:#059669; color:white; border-color:#059669; transform:scale(1.08); box-shadow:0 8px 18px rgba(5,150,105,.25)}
-.channelCard strong { display:block; font-size:15px; color:var(--ink); font-weight:750; margin-bottom:2px}
-.channelCard span { display:block; font-size:14px; color:var(--blue); font-weight:600}
-.channelCard small { display:block; font-size:12px; color:var(--muted); margin-top:4px}
+.contactPageSection { background:linear-gradient(180deg,#f8faff 0%,#ffffff 480px); padding-bottom:88px}
+.contactHeader { max-width:760px; margin-bottom:44px}
+.contactBadgeRow { display:flex; align-items:center; gap:12px; margin-bottom:16px; flex-wrap:wrap}
+.channelBadge { display:inline-flex; align-items:center; padding:5px 12px; border-radius:999px; background:#eff4ff; color:var(--blue); font-size:12px; font-weight:750; border:1px solid #d8e5fc}
+.contactHeader h1 { font-size:clamp(34px,4vw,46px); font-weight:800; letter-spacing:-.035em; margin:0 0 14px; color:var(--ink)}
+.contactHeader p { color:var(--muted); font-size:17px; line-height:1.65; margin:0}
+.contactModernGrid { display:grid; grid-template-columns:1.2fr .8fr; gap:36px; align-items:start; margin-bottom:48px}
+.contactChannelsCol h2 { font-size:22px; font-weight:800; margin:0 0 18px; color:var(--ink); letter-spacing:-.02em}
+.contactChannelList { display:flex; flex-direction:column; gap:16px}
+.modernChannelCard { display:flex; align-items:center; gap:20px; padding:22px 24px; border:1px solid #e5ecf6; border-radius:20px; background:white; text-decoration:none; color:inherit; box-shadow:0 6px 20px rgba(33,54,94,.04); transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease; position:relative}
+a.modernChannelCard:hover { transform:translateY(-3px); border-color:#bdd6fb; box-shadow:0 12px 30px rgba(36,96,217,.1)}
+.modernChannelCard.staticCard { cursor:default}
+.channelIconBox { width:52px; height:52px; min-width:52px; min-height:52px; border-radius:16px; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; box-sizing:border-box; transition:transform .25s ease,box-shadow .25s ease}
+.channelIconBox svg { display:block; width:24px; height:24px; min-width:24px; min-height:24px; max-width:24px; max-height:24px; margin:auto; flex-shrink:0}
+.emailBox { background:linear-gradient(135deg,#edf4ff 0%,#e1edff 100%); color:var(--blue); border:1px solid #cde0fc; box-shadow:0 4px 14px rgba(36,96,217,.08)}
+.phoneBox { background:linear-gradient(135deg,#ecfdf5 0%,#d1fae5 100%); color:#059669; border:1px solid #a7f3d0; box-shadow:0 4px 14px rgba(5,150,105,.08)}
+.locationBox { background:linear-gradient(135deg,#f5f3ff 0%,#ede9fe 100%); color:#7c3aed; border:1px solid #ddd6fe; box-shadow:0 4px 14px rgba(124,58,237,.08)}
+a.modernChannelCard:hover .emailBox { transform:scale(1.08); background:var(--blue); color:white; border-color:var(--blue); box-shadow:0 8px 22px rgba(36,96,217,.28)}
+a.modernChannelCard:hover .phoneBox { transform:scale(1.08); background:#059669; color:white; border-color:#059669; box-shadow:0 8px 22px rgba(5,150,105,.28)}
+.channelInfo { flex:1; min-width:0}
+.channelInfoHeader { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:4px}
+.channelInfoHeader strong { font-size:16px; font-weight:800; color:var(--ink)}
+.channelPill { display:inline-flex; align-items:center; padding:2px 8px; border-radius:999px; background:#eff4ff; color:var(--blue); font-size:11px; font-weight:750; border:1px solid #d5e5ff}
+.channelPill.greenPill { background:#e8f7ee; color:#12824b; border-color:#c2eccf}
+.channelPill.purplePill { background:#f5f2ff; color:#6d28d9; border-color:#e4daf8}
+.channelValue { display:block; font-size:15px; font-weight:700; color:var(--blue); margin-bottom:4px; overflow-wrap:anywhere}
+.channelDesc { font-size:13px; color:var(--muted); line-height:1.5; margin:0}
+.channelActionArrow { font-size:18px; font-weight:800; color:#8fa1be; transition:transform .2s ease,color .2s ease; padding-left:4px}
+a.modernChannelCard:hover .channelActionArrow { transform:translateX(5px); color:var(--blue)}
+.contactSideCol { display:flex; flex-direction:column; gap:20px}
+.activeBookingSupportCard { background:linear-gradient(135deg,#f7fafe 0%,#eff5ff 100%); border:1.5px solid #d1e2fc; border-radius:24px; padding:30px 26px; box-shadow:0 10px 30px rgba(36,96,217,.06); position:relative}
+.supportCardBadge { display:inline-flex; align-items:center; gap:8px; padding:5px 12px; border-radius:999px; background:white; color:var(--blue); font-size:12px; font-weight:800; border:1px solid #d5e5ff; margin-bottom:16px; box-shadow:0 2px 8px rgba(36,96,217,.06)}
+.activeBookingSupportCard h3 { font-size:19px; font-weight:800; margin:0 0 8px; color:var(--ink)}
+.activeBookingSupportCard p { font-size:14px; color:var(--muted); line-height:1.6; margin:0 0 20px}
+.supportCardActions { display:flex; flex-direction:column; gap:10px}
+.contactGuarantees { background:white; border:1px solid #e7ecf5; border-radius:22px; padding:24px 22px; box-shadow:0 6px 20px rgba(33,54,94,.03); display:flex; flex-direction:column; gap:16px}
+.guaranteeItem { display:flex; align-items:flex-start; gap:14px}
+.guaranteeIcon { font-size:22px; flex-shrink:0; line-height:1.2}
+.guaranteeItem strong { display:block; font-size:14px; font-weight:750; color:var(--ink); margin-bottom:2px}
+.guaranteeItem span { display:block; font-size:12.5px; color:var(--muted); line-height:1.5}
+.contactFaqBanner { background:linear-gradient(135deg,#133fa0 0%,#286af0 100%); color:white; border-radius:24px; padding:32px 36px; display:flex; justify-content:space-between; align-items:center; gap:24px; box-shadow:0 12px 32px rgba(36,96,217,.2); flex-wrap:wrap}
+.faqBannerContent h3 { font-size:22px; font-weight:800; margin:0 0 6px; color:white}
+.faqBannerContent p { font-size:14.5px; color:#dbe7ff; margin:0; line-height:1.6; max-width:620px}
+.contactFaqBanner .primaryButton { background:white; color:var(--blue); box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.contactFaqBanner .primaryButton:hover { background:#f0f5ff; color:#1241a4}
 .authWrap { display:grid; grid-template-columns:.9fr 1.1fr; gap:50px; align-items:center; max-width:900px}
 .authAside h1 { font-size:44px; letter-spacing:-.04em; margin:0 0 14px}
 .authAside p { color:var(--muted)}
@@ -220,7 +245,7 @@ a.channelCard:hover .phoneChannel { background:#059669; color:white; border-colo
 .heroGrid { grid-template-columns:1fr; min-height:auto; padding:70px 0 30px}
 .categoryGrid { grid-template-columns:repeat(2,1fr)}
 .infoGrid { grid-template-columns:repeat(2,1fr)}
-.trustPanel,.contactGrid,.authWrap { grid-template-columns:1fr}
+.trustPanel,.contactGrid,.contactModernGrid,.authWrap { grid-template-columns:1fr}
 .trustStats { grid-template-columns:1fr 1fr 1fr}
 .appBandInner { flex-direction:column; align-items:flex-start}
 .bookingRow { grid-template-columns:1fr 1fr}
@@ -460,7 +485,11 @@ button.selectCard:not(:disabled):hover { border-color:#93b0e5}
 .profileCard { padding:24px}
 .wizardPanel { padding:22px 18px}
 .step { padding:14px 3px}
-.contactGrid { gap:28px}
+.contactGrid,.contactModernGrid { gap:28px}
+.modernChannelCard { padding:18px 16px; gap:14px}
+.channelIconBox { width:46px; height:46px; min-width:46px; min-height:46px; border-radius:14px}
+.channelIconBox svg { width:22px; height:22px; min-width:22px; min-height:22px }
+.contactFaqBanner { padding:24px 20px; flex-direction:column; align-items:flex-start}
 .aboutStatsRow,.aboutGrid { grid-template-columns:1fr}
 .aboutCtaBanner { padding:24px; flex-direction:column; align-items:flex-start}
 }
