@@ -298,12 +298,36 @@ button,input,select,textarea { font:inherit}
 .buddyCard img { width:56px; height:56px; border-radius:50%; object-fit:cover}
 .buddyCard span { display:flex; flex-direction:column; gap:4px}
 .buddyCard small { color:var(--muted)}
-.buddyCard b { color:var(--blue)}
-.summaryCard { border:1px solid var(--line); border-radius:16px; padding:18px; margin-bottom:18px}
+.summaryCard { border:1px solid var(--line); border-radius:16px; padding:18px; margin-bottom:18px; background:#fafbfe }
 .summaryCard div { gap:20px; display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px dashed var(--line)}
 .summaryCard div:last-child { border:0}
 .summaryCard span { color:var(--muted)}
-.profileCard { display:grid; grid-template-columns:180px 1fr; gap:28px; align-items:center; border:1px solid var(--line); border-radius:24px; padding:30px; box-shadow:var(--shadow)}
+.summaryCard strong { max-width:65%; text-align:right; overflow-wrap:anywhere}
+
+/* Multi-stage Buddy Onboarding Stepper */
+.stepper { display:grid; grid-template-columns:repeat(5,1fr); background:#f7f9fc; border-bottom:1px solid var(--line)}
+.step { border:0; background:transparent; padding:18px 8px; text-align:center; color:var(--muted); font-style:normal; font-size:12px; cursor:pointer}
+.step span { display:flex; width:28px; height:28px; border-radius:50%; margin:0 auto 6px; align-items:center; justify-content:center; background:#e7ebf2; font-weight:800}
+.step em { font-style:normal; display:block; font-size:11px}
+.step.active { color:var(--blue)}
+.step.active span { background:var(--blue); color:white}
+.step[aria-current=step] { background:#edf3ff; box-shadow:inset 0 -3px var(--blue)}
+
+/* Helper classes for Wizard and Form components */
+.formLabel { display:flex; flex-direction:column; gap:8px; font-size:14px; font-weight:700 }
+.fieldHintLabel { display:flex; flex-direction:column; gap:8px; font-size:13.5px; font-weight:700 }
+.sectionSubheading { font-size:13.5px; font-weight:700; color:var(--ink); display:block; margin-bottom:10px }
+.emptyNoticeCard { text-align:center; padding:36px 20px; background:#f8fafc; border-radius:16px; border:1px dashed #cbd5e1 }
+.emptyNoticeCard p { margin:0; color:var(--muted); font-size:14.5px }
+.checkoutBtn { padding:16px 24px; font-size:16px; font-weight:800; margin-top:8px }
+.successCardSummary { background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:18px; padding:20px; max-width:440px; margin:0 auto 28px; text-align:left }
+.successSummaryRow { display:flex; justify-content:space-between; font-size:13.5px; margin-bottom:8px }
+.successSummaryRow:last-child { margin-bottom:0 }
+.coordsBox { background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:14px; padding:16px; margin-top:14px }
+.coordsBoxHeader { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px }
+.coordsBoxHeader strong { font-size:13.5px; color:var(--ink); display:block }
+.coordsBoxHeader span { font-size:12.5px; color:var(--muted) }
+.locateBtn { padding:8px 14px; font-size:13px }
 .avatar { border-radius:24px; object-fit:cover}
 .verified { color:var(--green); font-weight:800; font-size:13px}
 .profileCard h1 { font-size:44px; margin:8px 0}
@@ -512,15 +536,6 @@ button:not(:disabled),a { -webkit-tap-highlight-color:transparent}
 
 .formCard h2,.formCard h3,.stack>h2 { margin:0}
 .formCard p,.notice p { margin:0}
-
-.wizardActions { align-items:center; padding-top:22px; border-top:1px solid var(--line)}
-
-.step[aria-current=step] { background:#edf3ff; box-shadow:inset 0 -3px var(--blue)}
-
-.selectCard { line-height:1.6}
-.selectCard p { color:var(--muted); font-size:14px}
-
-.summaryCard { background:#fafbfe}
 .bookingRow { background:white}
 .bookingRow div { gap:4px}
 

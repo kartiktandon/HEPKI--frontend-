@@ -1,9 +1,38 @@
 'use client';
+
 import { FormEvent, useState } from 'react';
 import { api, errorMessage } from '@/lib/api/client';
 import { id, list, record, text, unwrap } from '@/lib/api/models';
 import { useResource, type InitialResource } from '@/lib/api/hooks';
 import { ErrorNotice } from './ApiState';
+
+function CheckIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+      <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function AddressIcon({ type }: { type: string }) {
+  if (type === 'work') {
+    return (
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+      </svg>
+    );
+  }
+  return (
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+  );
+}
+
+function formatAddress(address: Record<string, unknown>): string {
+  return text(address.formattedAddress) || [address.flatNumber, address.society, address.city].map(v => text(v)).filter(Boolean).join(', ');
+}
 
 export default function AddressManager({
   selected,
@@ -52,7 +81,7 @@ export default function AddressManager({
     }
   }
 
-  async function locate() {
+  function locate() {
     setError('');
     if (!navigator.geolocation) {
       setError('Your browser does not support automatic location. Enter coordinates manually.');
@@ -85,7 +114,7 @@ export default function AddressManager({
           {addresses.map(address => {
             const addrId = id(address);
             const isSelected = selected === addrId;
-            const fullStr = text(address.formattedAddress) || [address.flatNumber, address.society, address.city].map(v => text(v)).filter(Boolean).join(', ');
+            const fullStr = formatAddress(address);
             const addrType = text(address.addressType, 'home').toLowerCase();
 
             return (
@@ -104,16 +133,7 @@ export default function AddressManager({
               >
                 <div className="addressCardLeft">
                   <div className="addressCardIcon">
-                    {addrType === 'work' ? (
-                      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                      </svg>
-                    ) : (
-                      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                    )}
+                    <AddressIcon type={addrType} />
                   </div>
                   <div className="addressCardDetails">
                     <strong>
@@ -123,7 +143,7 @@ export default function AddressManager({
                     </strong>
                     <p>{fullStr}</p>
                     {Boolean(address.contactName) && (
-                      <p style={{ fontSize: '12px', color: '#718096', marginTop: '3px' }}>
+                      <p style={{ fontSize: '12px', color: 'var(--muted)', marginTop: '3px' }}>
                         Contact: {text(address.contactName)} {address.contactPhone ? `(${text(address.contactPhone)})` : ''}
                       </p>
                     )}
@@ -132,11 +152,7 @@ export default function AddressManager({
 
                 {onSelect && (
                   <div className="selectIndicator" style={{ marginLeft: '12px' }}>
-                    {isSelected && (
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                        <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    )}
+                    {isSelected && <CheckIcon />}
                   </div>
                 )}
               </div>
@@ -146,11 +162,9 @@ export default function AddressManager({
       )}
 
       {!resource.loading && !addresses.length && !adding && (
-        <div style={{ textAlign: 'center', padding: '24px 16px', background: '#f8fafc', borderRadius: '16px', border: '1px dashed #cbd5e1' }}>
-          <p style={{ margin: '0 0 12px', color: 'var(--muted)', fontSize: '14.5px' }}>
-            No saved addresses found. Please add the address where you need assistance.
-          </p>
-          <button type="button" className="primaryButton" onClick={() => setAdding(true)}>
+        <div className="emptyNoticeCard">
+          <p>No saved addresses found. Please add the address where you need assistance.</p>
+          <button type="button" className="primaryButton" style={{ marginTop: '12px' }} onClick={() => setAdding(true)}>
             + Add First Address
           </button>
         </div>
@@ -218,13 +232,13 @@ export default function AddressManager({
               <textarea name="formattedAddress" required autoComplete="street-address" placeholder="Complete address including area, pincode and city" rows={3} />
             </label>
 
-            <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '14px', padding: '16px', marginTop: '14px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px', marginBottom: '12px' }}>
+            <div className="coordsBox">
+              <div className="coordsBoxHeader">
                 <div>
-                  <strong style={{ fontSize: '13.5px', color: 'var(--ink)', display: 'block' }}>Map Coordinates</strong>
-                  <span style={{ fontSize: '12.5px', color: 'var(--muted)' }}>Used by our dispatch engine to assign the closest Buddy.</span>
+                  <strong>Map Coordinates</strong>
+                  <span>Used by our dispatch engine to assign the closest Buddy.</span>
                 </div>
-                <button type="button" className="secondaryButton" onClick={locate} disabled={locating} style={{ padding: '8px 14px', fontSize: '13px' }}>
+                <button type="button" className="secondaryButton locateBtn" onClick={locate} disabled={locating}>
                   {locating ? 'Detecting location…' : '📍 Auto-detect My Location'}
                 </button>
               </div>

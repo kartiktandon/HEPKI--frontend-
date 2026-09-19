@@ -10,15 +10,74 @@ import { useSession } from './SessionProvider';
 import { ErrorNotice, LoginNotice } from './ApiState';
 import AddressManager from './AddressManager';
 
-const wizardSteps = [
+const WIZARD_STEPS = [
   { id: 'service', label: 'Service' },
   { id: 'type', label: 'Booking Type' },
   { id: 'schedule', label: 'Schedule' },
   { id: 'address', label: 'Address' },
   { id: 'review', label: 'Review & Pay' },
-];
+] as const;
 
-const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
+
+const BOOKING_TYPES = [
+  {
+    value: 'instant',
+    title: 'On-the-Spot',
+    icon: '⚡',
+    badge: 'Fastest Match',
+    badgeClass: 'badgeInstant',
+    desc: 'Immediate dispatch. The nearest verified Buddy is matched directly to your address.',
+  },
+  {
+    value: 'prebooked',
+    title: 'Pre-Book',
+    icon: '📅',
+    badge: 'Flexible Slot',
+    badgeClass: 'badgePrebook',
+    desc: 'Schedule ahead for a specific date and time that fits your day perfectly.',
+  },
+  {
+    value: 'monthly_session',
+    title: 'Monthly Package',
+    icon: '⭐',
+    badge: 'Best Value',
+    badgeClass: 'badgeMonthly',
+    desc: 'Recurring sessions with a dedicated Buddy each week and bundled savings.',
+  },
+] as const;
+
+function CheckIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+      <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function ArrowLeftIcon() {
+  return (
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+    </svg>
+  );
+}
+
+function ArrowRightIcon() {
+  return (
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+    </svg>
+  );
+}
+
+function LockIcon() {
+  return (
+    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+    </svg>
+  );
+}
 
 export default function BookingWizard({ initialCatalog }: { initialCatalog?: InitialResource }) {
   const { loading, user } = useSession();
@@ -56,6 +115,9 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
   const available = list(services.data, 'services');
   const service = available.find(s => id(s) === serviceId);
   const monthly = bookingType === 'monthly_session';
+
+  const currentCategoryName = categories.find(c => c.id === categoryId)?.name;
+  const currentRate = service ? servicePrice(service) : undefined;
 
   function next() {
     setError('');
@@ -186,18 +248,18 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
           <p role="status">{message}</p>
           <ErrorNotice message={error} />
 
-          <div style={{ background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: '18px', padding: '20px', maxWidth: '440px', margin: '0 auto 28px', textAlign: 'left' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '13.5px' }}>
+          <div className="successCardSummary">
+            <div className="successSummaryRow">
               <span style={{ color: 'var(--muted)' }}>Service:</span>
-              <strong style={{ color: 'var(--ink)' }}>{monthly ? categories.find(c => c.id === categoryId)?.name : text(service?.serviceName)}</strong>
+              <strong style={{ color: 'var(--ink)' }}>{monthly ? currentCategoryName : text(service?.serviceName)}</strong>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '13.5px' }}>
+            <div className="successSummaryRow">
               <span style={{ color: 'var(--muted)' }}>Type:</span>
               <span style={{ fontWeight: 700, color: 'var(--blue)' }}>
                 {bookingType === 'instant' ? '⚡ On-the-Spot' : bookingType === 'prebooked' ? '📅 Scheduled' : '⭐ Monthly Package'}
               </span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13.5px' }}>
+            <div className="successSummaryRow">
               <span style={{ color: 'var(--muted)' }}>Payment:</span>
               <strong style={{ color: 'var(--ink)' }}>{paymentMethod === 'online' ? 'Online (Paid / Pending)' : 'Cash on Delivery'}</strong>
             </div>
@@ -224,10 +286,10 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
       {/* Desktop Stepper */}
       <div className="stepperContainer" aria-label="Booking steps">
         <div className="stepperTrack">
-          <div className="stepperProgress" style={{ width: `${(step / (wizardSteps.length - 1)) * 100}%` }} />
+          <div className="stepperProgress" style={{ width: `${(step / (WIZARD_STEPS.length - 1)) * 100}%` }} />
         </div>
         <ul className="stepperList">
-          {wizardSteps.map((s, i) => {
+          {WIZARD_STEPS.map((s, i) => {
             const isCurrent = i === step;
             const isCompleted = i < step;
             return (
@@ -265,12 +327,12 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
       <div className="stepperMobile">
         <div className="stepperMobileHeader">
           <span className="stepperMobilePill">Step {step + 1} of 5</span>
-          <span className="stepperMobileTitle">{wizardSteps[step].label}</span>
+          <span className="stepperMobileTitle">{WIZARD_STEPS[step].label}</span>
         </div>
         <div className="stepperMobileProgressBar">
           <div
             className="stepperMobileProgressFill"
-            style={{ width: `${((step + 1) / wizardSteps.length) * 100}%` }}
+            style={{ width: `${((step + 1) / WIZARD_STEPS.length) * 100}%` }}
           />
         </div>
       </div>
@@ -289,7 +351,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
             <ErrorNotice message={catalog.error} retry={catalog.reload} />
             {catalog.loading && <p role="status">Loading categories…</p>}
 
-            <label style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '14px', fontWeight: 700 }}>
+            <label className="formLabel">
               Service Category
               <div className="selectWrapper">
                 <select
@@ -320,9 +382,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
 
             {categoryId && !services.loading && (
               <div style={{ marginTop: '10px' }}>
-                <span style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--ink)', display: 'block', marginBottom: '10px' }}>
-                  Available Services
-                </span>
+                <span className="sectionSubheading">Available Services</span>
                 <div className="optionGrid">
                   {available.map(s => {
                     const isSelected = serviceId === id(s);
@@ -354,11 +414,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
                             ⏱️ Min. {minHours} {minHours > 1 ? 'hours' : 'hour'}
                           </span>
                           <div className="selectIndicator">
-                            {isSelected && (
-                              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                                <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-                              </svg>
-                            )}
+                            {isSelected && <CheckIcon />}
                           </div>
                         </div>
                       </button>
@@ -369,10 +425,8 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
             )}
 
             {categoryId && !services.loading && !services.error && !available.length && (
-              <div style={{ textAlign: 'center', padding: '36px 20px', background: '#f8fafc', borderRadius: '16px', border: '1px dashed #cbd5e1' }}>
-                <p style={{ margin: 0, color: 'var(--muted)', fontSize: '14.5px' }}>
-                  No services are currently active in this category. Please select another category.
-                </p>
+              <div className="emptyNoticeCard">
+                <p>No services are currently active in this category. Please select another category.</p>
               </div>
             )}
           </div>
@@ -387,32 +441,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
             </div>
 
             <div className="optionGrid three">
-              {[
-                {
-                  value: 'instant',
-                  title: 'On-the-Spot',
-                  icon: '⚡',
-                  badge: 'Fastest Match',
-                  badgeClass: 'badgeInstant',
-                  desc: 'Immediate dispatch. The nearest verified Buddy is matched directly to your address.',
-                },
-                {
-                  value: 'prebooked',
-                  title: 'Pre-Book',
-                  icon: '📅',
-                  badge: 'Flexible Slot',
-                  badgeClass: 'badgePrebook',
-                  desc: 'Schedule ahead for a specific date and time that fits your day perfectly.',
-                },
-                {
-                  value: 'monthly_session',
-                  title: 'Monthly Package',
-                  icon: '⭐',
-                  badge: 'Best Value',
-                  badgeClass: 'badgeMonthly',
-                  desc: 'Recurring sessions with a dedicated Buddy each week and bundled savings.',
-                },
-              ].map(opt => {
+              {BOOKING_TYPES.map(opt => {
                 const isSelected = bookingType === opt.value;
 
                 return (
@@ -425,11 +454,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%' }}>
                       <div className="bookingTypeIconBox">{opt.icon}</div>
                       <div className="selectIndicator">
-                        {isSelected && (
-                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                            <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        )}
+                        {isSelected && <CheckIcon />}
                       </div>
                     </div>
 
@@ -512,7 +537,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
 
             {monthly && (
               <div style={{ marginTop: '18px' }}>
-                <label style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13.5px', fontWeight: 700 }}>
+                <label className="fieldHintLabel">
                   Hours per session (Min: {Number(service?.minDurationHours || 1)} hrs)
                   <input
                     type="number"
@@ -525,11 +550,11 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
                 </label>
 
                 <div style={{ marginTop: '16px' }}>
-                  <span style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--ink)', display: 'block', marginBottom: '8px' }}>
+                  <span className="sectionSubheading" style={{ marginBottom: '8px' }}>
                     Recurring Weekly Days
                   </span>
                   <div className="daysPillGrid">
-                    {dayNames.map((d, i) => {
+                    {DAY_NAMES.map((d, i) => {
                       const isChecked = days.includes(i);
                       return (
                         <button
@@ -593,7 +618,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
                   {monthly ? 'Category / Package' : 'Service'}
                 </span>
                 <span className="reviewSummaryValue">
-                  {monthly ? categories.find(c => c.id === categoryId)?.name : text(service?.serviceName)}
+                  {monthly ? currentCategoryName : text(service?.serviceName)}
                 </span>
               </div>
 
@@ -606,7 +631,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
                 </span>
                 <span className="reviewSummaryValue">
                   {monthly
-                    ? `${month} · ${time} (${days.map(d => dayNames[d]).join(', ')})`
+                    ? `${month} · ${time} (${days.map(d => DAY_NAMES[d]).join(', ')})`
                     : bookingType === 'instant'
                     ? '⚡ Instant Dispatch (Next Available)'
                     : `${date} at ${time}`}
@@ -631,7 +656,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
               <div className="reviewSummaryTotal">
                 <span className="reviewSummaryTotalLabel">Service Rate</span>
                 <span className="reviewSummaryTotalValue">
-                  {money(servicePrice(service || {}))}
+                  {money(currentRate)}
                   {service?.pricingType === 'hourly' ? '/hr' : ''}
                 </span>
               </div>
@@ -667,7 +692,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
 
                 {/* Payment Method Toggle Cards */}
                 <div style={{ marginTop: '14px' }}>
-                  <span style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--ink)', display: 'block', marginBottom: '8px' }}>
+                  <span className="sectionSubheading" style={{ marginBottom: '8px' }}>
                     Select Payment Method
                   </span>
                   <div className="paymentCardGrid">
@@ -681,11 +706,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
                         <div className="paymentCardHeader">
                           <span className="paymentCardTitle">Online Payment</span>
                           <div className="selectIndicator">
-                            {paymentMethod === 'online' && (
-                              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                                <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-                              </svg>
-                            )}
+                            {paymentMethod === 'online' && <CheckIcon />}
                           </div>
                         </div>
                         <p className="paymentCardDesc">Pay securely via Razorpay with UPI, Debit/Credit Card, or NetBanking.</p>
@@ -707,11 +728,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
                         <div className="paymentCardHeader">
                           <span className="paymentCardTitle">Cash on Delivery</span>
                           <div className="selectIndicator">
-                            {paymentMethod === 'cod' && (
-                              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                                <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-                              </svg>
-                            )}
+                            {paymentMethod === 'cod' && <CheckIcon />}
                           </div>
                         </div>
                         <p className="paymentCardDesc">Pay in cash directly to your Buddy once the service has been completed.</p>
@@ -729,10 +746,9 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
             {/* Confirm CTA */}
             <button
               type="button"
-              className="primaryButton full"
+              className="primaryButton full checkoutBtn"
               disabled={busy}
               onClick={book}
-              style={{ padding: '16px 24px', fontSize: '16px', fontWeight: 800, marginTop: '8px' }}
             >
               <span className="btnIcon">
                 {busy ? (
@@ -741,9 +757,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
                   'Confirm & Create Monthly Package'
                 ) : paymentMethod === 'online' ? (
                   <>
-                    <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
+                    <LockIcon />
                     Confirm Booking & Open Checkout
                   </>
                 ) : (
@@ -766,9 +780,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
             }}
           >
             <span className="btnIcon">
-              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-              </svg>
+              <ArrowLeftIcon />
               Back
             </span>
           </button>
@@ -779,9 +791,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
             <button type="button" className="primaryButton" onClick={next}>
               <span className="btnIcon">
                 Continue
-                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
+                <ArrowRightIcon />
               </span>
             </button>
           )}
