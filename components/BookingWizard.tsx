@@ -151,14 +151,28 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
     setError('');
     let saved = false;
     try {
+      const now = new Date();
+      const year = now.getFullYear();
+      const monthStr = String(now.getMonth() + 1).padStart(2, '0');
+      const dayStr = String(now.getDate()).padStart(2, '0');
+      const todayDate = `${year}-${monthStr}-${dayStr}`;
+
+      const hoursStr = String(now.getHours()).padStart(2, '0');
+      const minutesStr = String(now.getMinutes()).padStart(2, '0');
+      const currentTime = `${hoursStr}:${minutesStr}`;
+
+      const scheduledDate = bookingType === 'prebooked' && date ? date : todayDate;
+      const timeSlot = bookingType === 'prebooked' && time ? time : currentTime;
+
       const body = monthly
         ? { categoryId, addressId, month, recurringDays: days, sessionTime: time, sessionDurationHours: hours, genderPreference: 'any' }
         : {
             serviceId,
             addressId,
             immediate: bookingType === 'instant',
+            scheduledDate,
+            timeSlot,
             paymentMethod,
-            ...(bookingType === 'prebooked' ? { scheduledDate: date, timeSlot: time } : {}),
             ...(promoCode.trim() ? { promoCode: promoCode.trim() } : {}),
           };
 

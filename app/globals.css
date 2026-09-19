@@ -142,10 +142,25 @@ button,input,select,textarea { font:inherit}
 .storeButtons { display:flex; gap:12px; flex-wrap:wrap}
 .storeBtn { display:inline-flex; align-items:center; gap:10px; background:#0e1e36; color:white; border:1px solid rgba(255,255,255,.12); padding:13px 20px; border-radius:14px; font-weight:700; font-size:14px; cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,.15); transition:transform .2s ease,background .2s ease,box-shadow .2s ease}
 .storeBtn:hover { transform:translateY(-2px); background:#152845; box-shadow:0 10px 24px rgba(0,0,0,.22)}
-.footer { background:#0f1d34; color:#dfe7f4; padding:48px 0}
-.footerGrid { display:grid; grid-template-columns:2fr 1fr 1fr; gap:30px}
-.footerGrid>div { display:flex; flex-direction:column; gap:10px}
-.footer p,.footer span { color:#96a5bf; font-size:14px}
+.footer { background:linear-gradient(180deg,#0d192e 0%,#08101e 100%); color:#dfe7f4; padding:56px 0 32px; border-top:1px solid rgba(255,255,255,.08); position:relative}
+.footerGrid { display:grid; grid-template-columns:2.2fr 1fr 1fr 1fr; gap:40px}
+.footerBrandCol { display:flex; flex-direction:column; gap:16px; max-width:340px}
+.footerBrand { color:white!important; font-size:24px; font-weight:800; display:inline-flex; align-items:center; gap:10px}
+.footerBrand .brandMark { font-size:24px}
+.footerTagline { font-size:14.5px; line-height:1.65; color:#95a7c4; margin:0}
+.footerPillBadge { display:inline-flex; align-items:center; gap:8px; width:fit-content; padding:6px 14px; border-radius:999px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); color:#ccd9ee; font-size:12.5px; font-weight:600}
+.footerPulseDot { width:8px; height:8px; border-radius:50%; background:#10b981; box-shadow:0 0 0 3px rgba(16,185,129,.25); animation:pulseGlow 2s infinite}
+@keyframes pulseGlow { 0%,100% { opacity:1; transform:scale(1) } 50% { opacity:.6; transform:scale(.85) } }
+.footerNavCol { display:flex; flex-direction:column; gap:12px}
+.footerNavCol strong { color:#ffffff; font-size:13px; text-transform:uppercase; letter-spacing:.08em; font-weight:800; margin-bottom:4px}
+.footerNavCol a { font-size:14.5px; color:#9cb1d0; text-decoration:none; transition:color .18s ease,transform .18s ease; width:fit-content}
+.footerNavCol a:hover { color:#ffffff; transform:translateX(3px)}
+.footerBottom { display:flex; justify-content:space-between; align-items:center; gap:20px; border-top:1px solid rgba(255,255,255,.08); padding-top:28px; margin-top:48px; flex-wrap:wrap}
+.footerBottomCopy { display:flex; align-items:center; gap:10px; color:#788ca8; font-size:13px; flex-wrap:wrap}
+.footerDotDivider { color:#4a5b75}
+.footerLegalLinks { display:flex; align-items:center; gap:18px}
+.footerLegalLinks a { font-size:13px; color:#8ea3c2; text-decoration:none; transition:color .15s ease}
+.footerLegalLinks a:hover { color:#ffffff; text-decoration:underline}
 /* Upgraded Booking Wizard */
 .wizardShell { border: 1.5px solid #e5edf8; border-radius: 26px; background: #ffffff; box-shadow: 0 14px 40px rgba(22, 45, 87, 0.06); overflow: hidden }
 
@@ -596,18 +611,7 @@ button:not(:disabled),a { -webkit-tap-highlight-color:transparent}
 .authAside { align-self:start; padding-top:35px}
 .authAside p { line-height:1.7; max-width:340px}
 
-.footer { padding:56px 0 24px}
-.footerGrid { grid-template-columns:2fr 1fr 1fr; gap:48px}
 
-.footerGrid>div>strong { color:white; font-size:13px; margin-bottom:10px; text-transform:uppercase; letter-spacing:.08em}
-
-.footerGrid a:not(.brand) { font-size:14px; color:#b8c5d9; width:fit-content}
-.footerGrid p { margin:12px 0 0; color:#dfe7f4}
-
-.footerBottom { display:flex; justify-content:space-between; gap:16px; border-top:1px solid #2b3850; padding-top:24px; margin-top:40px}
-
-.footer .brand { color:white}
-.footer .brandMark { font-size:24px}
 
 @media(hover:hover) {
 .primaryButton:not(:disabled):hover { background:linear-gradient(135deg,#194dbb,#3269df); box-shadow:0 6px 16px #2460d933; transform:translateY(-1px)}
@@ -688,9 +692,9 @@ button.selectCard:not(:disabled):hover { border-color:#93b0e5}
 .trustStats strong { font-size:20px}
 .trustStats span { font-size:11px}
 
-.footerGrid { grid-template-columns:1fr 1fr; gap:32px 20px}
-.footerGrid>div:first-child { grid-column:1/-1}
-.footerBottom { flex-direction:column; gap:6px}
+.footerGrid { grid-template-columns:1fr 1fr; gap:36px 20px}
+.footerBrandCol { grid-column:1/-1; max-width:100%}
+.footerBottom { flex-direction:column; align-items:flex-start; gap:14px}
 
 .profileCard { padding:24px}
 .wizardPanel { padding:22px 18px}
