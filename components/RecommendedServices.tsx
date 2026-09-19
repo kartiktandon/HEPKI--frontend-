@@ -1,18 +1,16 @@
 'use client';
 import Link from 'next/link';
 import { useSession } from './SessionProvider';
-import { useResource } from '@/lib/api/hooks';
+import { useResource, type InitialResource } from '@/lib/api/hooks';
 import { ErrorNotice } from './ApiState';
-import { id, list, record } from '@/lib/api/models';
+import { id, list, recommendationCategory } from '@/lib/api/models';
 import DiscoveryServiceCard from './DiscoveryServiceCard';
 
-export default function RecommendedServices() {
+export default function RecommendedServices({ initialBookings, initialServices }: { initialBookings?: InitialResource; initialServices?: InitialResource }) {
   const { user, loading } = useSession();
-  const bookings = useResource(user ? '/api/v1/user/bookings?page=1&limit=10' : null, 'user');
-  const history = list(bookings.data, 'bookings');
-  const items = history.length ? history : list(bookings.data);
-  const categoryId = items.map(item => id(item.categoryId) || id(record(item.serviceId).categoryId)).find(Boolean);
-  const services = useResource(user && categoryId ? `/api/v1/user/services?categoryId=${encodeURIComponent(categoryId)}` : null);
+  const bookings = useResource(user ? '/api/v1/user/bookings?page=1&limit=10' : null, 'user', 0, initialBookings);
+  const categoryId = recommendationCategory(bookings.data);
+  const services = useResource(user && categoryId ? `/api/v1/user/services?categoryId=${encodeURIComponent(categoryId)}` : null, undefined, 0, initialServices);
   const matches = list(services.data, 'services');
   const recommendations = matches.length ? matches : list(services.data);
 

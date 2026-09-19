@@ -3,18 +3,18 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useSession } from './SessionProvider';
 import { ErrorNotice } from './ApiState';
-import { useResource } from '@/lib/api/hooks';
+import { useResource, type InitialResource } from '@/lib/api/hooks';
 import { id, list, record, safeImage, text } from '@/lib/api/models';
 
 type Coordinates = { latitude: number; longitude: number; name: string; addressId?: string };
 
-export default function NearbyBuddies() {
+export default function NearbyBuddies({ initialAddresses }: { initialAddresses?: InitialResource }) {
   const { user, loading } = useSession();
   const [location, setLocation] = useState<Coordinates | null>(null);
   const [locating, setLocating] = useState(false);
   const [locationError, setLocationError] = useState('');
 
-  const addresses = useResource(user ? '/api/v1/user/addresses' : null, 'user');
+  const addresses = useResource(user ? '/api/v1/user/addresses' : null, 'user', 0, initialAddresses);
   const path = location ? `/api/v1/user/buddies?lat=${location.latitude}&lng=${location.longitude}` : null;
   const buddies = useResource(user ? path : null, 'user');
 
@@ -182,6 +182,8 @@ export default function NearbyBuddies() {
                         <img
                           src={safeImage(buddy.profileImage ?? profile.profileImage ?? buddy.avatar, '/assets/default-buddy-avatar.jpg')}
                           alt={name}
+                          loading="lazy"
+                          decoding="async"
                           width={64}
                           height={64}
                         />

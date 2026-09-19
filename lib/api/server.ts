@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { record, text, unwrap, type RecordData } from './models';
 
 /** Server reads go directly to the fixed upstream, never through our HTTP proxy. */
-export async function serverGet(path: string, accessToken?: string): Promise<unknown> {
+export const serverGet = cache(async (path: string, accessToken?: string): Promise<unknown> => {
   if (!path.startsWith('/api/v1/') || path.includes('..') || path.includes('\\')) throw new Error('Invalid API path.');
   const base = new URL(process.env.HEPKI_API_BASE_URL || 'https://hepki.verdicto.co.in');
   if (!['https:', 'http:'].includes(base.protocol) || base.username || base.password) throw new Error('Invalid API base URL.');
@@ -20,7 +20,7 @@ export async function serverGet(path: string, accessToken?: string): Promise<unk
   const body = record(payload);
   if (!response.ok || body.success === false) throw new Error(text(body.error ?? body.message, 'The request failed. Please try again.'));
   return payload;
-}
+});
 
 export type InitialSession = { user: RecordData | null; provider: boolean };
 
@@ -42,9 +42,13 @@ export const getInitialSession = cache(async (): Promise<InitialSession | undefi
   }
 });
 
-export async function initialUserResource(path: string) {
-  const session = await getInitialSession();
-  if (!session?.user) return undefined;
-  try { return { path, data: await serverGet(path, cookies().get('hb_user_access')?.value) }; }
-  catch { return undefined; } // Existing client error/retry/refresh flow handles failures.
-}
+export const initialUserResource = cache(async (path: string) => {
+  const access = cookies().get('hb_user_access')?.value;
+  if (!access) return undefined;
+  // Start independent reads together, but only serialize data after session validation.
+  const [session, resource] = await Promise.all([
+    getInitialSession(),
+    serverGet(path, access).then(data => ({ path, data })).catch(() => undefined),
+  ]);
+  return session?.user ? resource : undefined;
+});

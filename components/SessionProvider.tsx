@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { ErrorNotice } from './ApiState';
 import { api, errorMessage } from '@/lib/api/client';
 import { record, unwrap, type RecordData } from '@/lib/api/models';
@@ -27,9 +27,10 @@ export default function SessionProvider({ children, initialSession }: { children
     finally { setLoading(false); }
   }, []);
   useEffect(() => { if (!initialSession) void reload(); const changed = () => { void reload(); }; window.addEventListener('session-changed', changed); return () => window.removeEventListener('session-changed', changed); }, [reload, initialSession]);
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try { await api('/auth/user/logout', { method: 'POST', body: {} }); }
     finally { await reload(); }
-  };
-  return <Context.Provider value={{ loading, user, provider, error, reload, logout }}>{error && <div className="container"><ErrorNotice message={error} retry={reload}/></div>}{children}</Context.Provider>;
+  }, [reload]);
+  const value = useMemo(() => ({ loading, user, provider, error, reload, logout }), [loading, user, provider, error, reload, logout]);
+  return <Context.Provider value={value}>{error && <div className="container"><ErrorNotice message={error} retry={reload}/></div>}{children}</Context.Provider>;
 }

@@ -53,3 +53,12 @@ export function servicePrice(service: RecordData): number | undefined {
   const price = pricing.finalPrice || pricing.retailPrice || pricing.basePrice;
   return typeof price === 'number' ? price : undefined;
 }
+
+/** Preserve API order and use the first booking with a known category. */
+export function recommendationCategory(data: unknown): string | undefined {
+  const bookings = list(data, 'bookings');
+  for (const booking of bookings.length ? bookings : list(data)) {
+    const categoryId = id(booking.categoryId) || id(record(booking.serviceId).categoryId);
+    if (categoryId) return categoryId;
+  }
+}
