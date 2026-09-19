@@ -13,11 +13,14 @@ button,input,select,textarea { font:inherit}
 .nav { display:flex; gap:20px; font-size:14px; color:#47536c}
 .nav a:hover { color:var(--blue)}
 .headerActions { display:flex; align-items:center; gap:10px}
-.primaryButton,.secondaryButton,.ghostButton,.linkButton { display:inline-flex; align-items:center; justify-content:center; border-radius:12px; padding:13px 20px; font-weight:700; border:1px solid transparent; cursor:pointer}
+.primaryButton,.secondaryButton,.ghostButton,.linkButton,.packageButton { display:inline-flex; align-items:center; justify-content:center; border-radius:12px; padding:13px 20px; font-weight:700; border:1px solid transparent; cursor:pointer}
 .primaryButton { background:linear-gradient(135deg,var(--blue),var(--blue2)); color:white; box-shadow:0 4px 12px rgba(36,96,217,.18)}
 .primaryButton.small { padding:11px 17px; font-size:14px}
-.secondaryButton { background:white; border-color:#ccd5e5; color:var(--ink)}
+.secondaryButton { background:white; border-color:#ccd5e5; color:var(--ink); box-shadow:0 2px 8px rgba(19,33,59,.04)}
 .ghostButton { background:#eef3ff; color:var(--blue)}
+.packageButton { background:linear-gradient(135deg,#ffffff 0%,#f5f8ff 100%); color:#1a3ea1; border:1.5px solid #bdd3fd; box-shadow:0 4px 14px rgba(36,96,217,.12); gap:8px; padding:11px 18px}
+.pkgIcon { display:inline-flex; align-items:center; justify-content:center; color:var(--blue)}
+.pkgBadge { display:inline-flex; align-items:center; padding:2px 8px; border-radius:999px; background:#e0ecff; color:var(--blue); font-size:11px; font-weight:800; letter-spacing:.02em; border:1px solid #c2dbff}
 .linkButton { padding:10px 12px}
 .full { width:100%}
 .hero { background:radial-gradient(circle at 85% 20%,#e9efff 0,transparent 30%),linear-gradient(180deg,#fbfcff,#f6f9ff); overflow:hidden}
@@ -41,8 +44,26 @@ button,input,select,textarea { font:inherit}
 .sectionHeading p { color:var(--muted); font-size:17px; line-height:1.7}
 .sectionHeading.centered { text-align:center}
 .sectionHeading.split { display:flex; align-items:flex-end; justify-content:space-between}
-.stepsGrid,.infoGrid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px}
-.stepsGrid>div,.infoGrid>article { border:1px solid var(--line); border-radius:18px; padding:28px; background:white; box-shadow:var(--shadow)}
+.howItWorksSection { background:linear-gradient(180deg,#ffffff 0%,#f8fafe 100%); position:relative}
+.stepsGrid,.infoGrid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px}
+.stepCard { position:relative; display:flex; flex-direction:column; justify-content:space-between; border:1px solid #e8eef8; border-radius:20px; padding:30px 26px; background:white; box-shadow:0 10px 30px rgba(33,54,94,.05); transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease; text-decoration:none; color:inherit; cursor:pointer}
+.stepCard:hover { transform:translateY(-6px); box-shadow:0 18px 36px rgba(36,96,217,.1); border-color:#c8d9f7}
+.stepTop { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px}
+.stepBadge { display:inline-flex; align-items:center; padding:5px 12px; border-radius:999px; background:#edf4ff; color:var(--blue); font-size:12px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; border:1px solid #d5e5ff}
+.stepIcon { display:inline-flex; width:48px; height:48px; border-radius:14px; align-items:center; justify-content:center; background:linear-gradient(135deg,#eef4ff 0%,#e0ecff 100%); color:var(--blue); border:1px solid #d0e0fb; box-shadow:0 4px 12px rgba(36,96,217,.08); transition:transform .2s ease,background .2s ease}
+.stepCard:hover .stepIcon { transform:scale(1.08); background:linear-gradient(135deg,#2460d9 0%,#4c7df0 100%); color:white; border-color:transparent}
+.stepContent h3 { font-size:20px; margin:0 0 10px; color:var(--ink); font-weight:750}
+.stepContent p { color:var(--muted); line-height:1.65; font-size:15px; margin:0}
+.stepMeta { display:flex; align-items:center; justify-content:space-between; margin-top:24px; padding-top:16px; border-top:1px dashed #e7ebf4; font-size:13px; font-weight:650; color:#5c6e8c}
+.stepArrow { color:var(--blue); font-size:16px; font-weight:800; transition:transform .2s ease}
+.stepCard:hover .stepArrow { transform:translateX(4px)}
+.stepCheck { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; background:#e6f9f0; color:#18a05e; font-size:12px; font-weight:800}
+.safetyCard { position:relative; display:flex; flex-direction:column; border:1px solid #e8eef8; border-radius:20px; padding:28px 24px; background:white; box-shadow:0 10px 30px rgba(33,54,94,.05); transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease}
+.safetyCard:hover { transform:translateY(-5px); box-shadow:0 18px 36px rgba(36,96,217,.1); border-color:#c8d9f7}
+.safetyCard:hover .stepIcon { transform:scale(1.08); background:linear-gradient(135deg,#2460d9 0%,#4c7df0 100%); color:white; border-color:transparent}
+.alertIcon { background:linear-gradient(135deg,#fff1f0 0%,#ffe4e1 100%)!important; color:#e02e24!important; border-color:#fed2cf!important}
+.safetyCard:hover .alertIcon { background:linear-gradient(135deg,#e02e24 0%,#f0483e 100%)!important; color:white!important; border-color:transparent!important}
+.stepsGrid>div:not(.stepCard),.infoGrid>article:not(.safetyCard) { border:1px solid var(--line); border-radius:18px; padding:28px; background:white; box-shadow:var(--shadow)}
 .stepsGrid b,.infoGrid b { display:inline-flex; width:42px; height:42px; border-radius:12px; align-items:center; justify-content:center; background:#eef3ff; color:var(--blue); margin-bottom:20px}
 .stepsGrid p,.infoGrid p { color:var(--muted); line-height:1.6}
 .infoGrid { grid-template-columns:repeat(4,1fr)}
@@ -217,7 +238,7 @@ input:hover,select:hover,textarea:hover { border-color:#a8b9d5}
 textarea { resize:vertical}
 .formGrid>*,.categoryGrid>*,.contactGrid>*,.bookingRow>* { min-width:0}
 
-.primaryButton,.secondaryButton,.ghostButton,.categoryCard { transition:background .15s,box-shadow .15s,transform .15s}
+.primaryButton,.secondaryButton,.ghostButton,.packageButton,.categoryCard { transition:background .15s,box-shadow .15s,transform .15s,border-color .15s}
 
 button:not(:disabled),a { -webkit-tap-highlight-color:transparent}
 
@@ -292,6 +313,7 @@ button:not(:disabled),a { -webkit-tap-highlight-color:transparent}
 .primaryButton:not(:disabled):hover { background:linear-gradient(135deg,#194dbb,#3269df); box-shadow:0 6px 16px #2460d933; transform:translateY(-1px)}
 
 .secondaryButton:not(:disabled):hover,.ghostButton:not(:disabled):hover { background:#edf3ff; border-color:#b8cbed}
+.packageButton:not(:disabled):hover { background:#ffffff; border-color:var(--blue); box-shadow:0 8px 22px rgba(36,96,217,.16); transform:translateY(-1px)}
 
 .categoryCard:hover { box-shadow:0 10px 28px #21365e12; transform:translateY(-3px)}
 
