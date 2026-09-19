@@ -496,7 +496,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
                   <div className="infoBulletRow">
                     <span className="infoBullet">✓ Real-time status in My Bookings</span>
                     <span className="infoBullet">✓ Direct contact with assigned Buddy</span>
-                    <span className="infoBullet">✓ 100% Escrow Protection</span>
+                    <span className="infoBullet">✓ 100% Secure Payments</span>
                   </div>
                 </div>
               </div>
@@ -662,11 +662,11 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
               </div>
             </div>
 
-            {/* Escrow Guarantee Banner */}
-            <div className="trustEscrowCard">
-              <div className="trustEscrowIcon">🛡️</div>
-              <div className="trustEscrowText">
-                <strong>100% Escrow Protection:</strong> Your payment is held safely in escrow and only released once your Buddy completes the session to your satisfaction.
+            {/* Secure Payment Guarantee Banner */}
+            <div className="trustPaymentCard">
+              <div className="trustPaymentIcon">🛡️</div>
+              <div className="trustPaymentText">
+                <strong>100% Secure & Protected:</strong> Your payment is processed securely via Razorpay with instant verification and guaranteed verified Buddies.
               </div>
             </div>
 

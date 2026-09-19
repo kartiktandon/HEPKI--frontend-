@@ -249,10 +249,10 @@ button,input,select,textarea { font:inherit}
 .paymentBadges { display: flex; gap: 6px; margin-top: 10px }
 .paymentMiniBadge { font-size: 10px; font-weight: 750; color: #475569; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0 }
 
-/* Trust Escrow Badge */
-.trustEscrowCard { display: flex; align-items: center; gap: 14px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 14px; padding: 13px 18px; margin-bottom: 22px }
-.trustEscrowIcon { font-size: 20px; color: #16a34a; flex-shrink: 0 }
-.trustEscrowText { font-size: 12.5px; color: #166534; line-height: 1.45; font-weight: 550 }
+/* Trust Payment Badge */
+.trustPaymentCard { display: flex; align-items: center; gap: 14px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 14px; padding: 13px 18px; margin-bottom: 22px }
+.trustPaymentIcon { font-size: 20px; color: #16a34a; flex-shrink: 0 }
+.trustPaymentText { font-size: 12.5px; color: #166534; line-height: 1.45; font-weight: 550 }
 
 /* Promo Input Container */
 .promoInputGroup { position: relative; display: flex; align-items: center; margin-top: 4px }
@@ -408,6 +408,47 @@ a.modernChannelCard:hover .channelActionArrow { transform:translateX(5px); color
 .tabRow { display:grid; grid-template-columns:1fr 1fr; background:#f2f4f8; border-radius:12px; padding:4px}
 .tabRow button { min-height:44px; color:var(--muted); padding:10px; border:0; border-radius:9px; background:transparent; cursor:pointer}
 .tabRow button.active { color:var(--blue); background:white; box-shadow:0 3px 10px rgba(0,0,0,.08); font-weight:800}
+
+/* Modern Auth System */
+.authModernWrap { display:grid; grid-template-columns:1fr 1.12fr; gap:52px; align-items:center; max-width:960px; margin:0 auto }
+.authBrandShowcase { display:flex; flex-direction:column; gap:20px }
+.authBrandShowcase h1 { font-size:clamp(30px, 3.2vw, 40px); font-weight:800; letter-spacing:-0.035em; color:var(--ink); line-height:1.2; margin:0 }
+.authBrandShowcase p { color:var(--muted); font-size:15px; line-height:1.6; margin:0 }
+.authFeatureList { display:flex; flex-direction:column; gap:14px; margin-top:6px }
+.authFeatureItem { display:flex; align-items:flex-start; gap:12px }
+.authFeatureIcon { width:36px; height:36px; border-radius:10px; background:#edf4ff; color:var(--blue); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; border:1px solid #d4e4fc }
+.authFeatureText strong { display:block; font-size:14.5px; font-weight:750; color:var(--ink) }
+.authFeatureText span { font-size:13px; color:var(--muted) }
+.authTrustBadge { display:inline-flex; align-items:center; gap:8px; font-size:12.5px; font-weight:650; color:#1e3a8a; background:#eff6ff; padding:7px 14px; border-radius:999px; border:1px solid #dbeafe; width:fit-content; margin-top:6px }
+
+.authCard { border:1.5px solid #e5edf8; border-radius:24px; background:#ffffff; box-shadow:0 14px 40px rgba(22, 45, 87, 0.08); padding:36px; display:flex; flex-direction:column; gap:18px }
+.authCardHeader { margin-bottom:2px }
+.authCardHeader h2 { font-size:24px; font-weight:800; color:var(--ink); margin:0 0 6px; letter-spacing:-0.02em }
+.authCardHeader p { font-size:14px; color:var(--muted); margin:0; line-height:1.5 }
+
+.authModeSwitch { display:grid; grid-template-columns:1fr 1fr; background:#f1f5fa; border-radius:14px; padding:4px; gap:4px }
+.authModeBtn { border:0; background:transparent; padding:10px; border-radius:10px; font-size:14px; font-weight:650; color:#64748b; cursor:pointer; transition:all 0.2s ease }
+.authModeBtn:hover:not(.active) { color:var(--ink) }
+.authModeBtn.active { background:#ffffff; color:var(--blue); font-weight:750; box-shadow:0 2px 8px rgba(0, 0, 0, 0.06) }
+
+.methodSwitch { display:flex; background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:12px; padding:3px; gap:4px }
+.methodBtn { flex:1; display:inline-flex; align-items:center; justify-content:center; gap:7px; padding:8px 12px; border:0; background:transparent; border-radius:9px; font-size:13px; font-weight:650; color:#64748b; cursor:pointer; transition:all 0.18s ease }
+.methodBtn.active { background:#ffffff; color:var(--blue); font-weight:750; box-shadow:0 2px 6px rgba(0, 0, 0, 0.05) }
+
+.inputWrapper { position:relative; display:flex; align-items:center; width:100% }
+.inputIcon { position:absolute; left:14px; color:#94a3b8; display:flex; align-items:center; pointer-events:none }
+.authInput { width:100%; border:1.5px solid #d6e0ee; border-radius:12px; padding:12px 14px 12px 42px; font-size:14.5px; color:var(--ink); background:#ffffff; outline:none; transition:border-color 0.2s ease, box-shadow 0.2s ease }
+.authInput:focus { border-color:var(--blue); box-shadow:0 0 0 3.5px rgba(36, 96, 217, 0.14) }
+.authInput.withTrailing { padding-right:44px }
+.trailingBtn { position:absolute; right:12px; background:none; border:none; padding:4px; color:#94a3b8; cursor:pointer; display:flex; align-items:center; transition:color 0.18s ease }
+.trailingBtn:hover { color:var(--ink) }
+
+.phoneInputGrid { display:grid; grid-template-columns:84px 1fr; gap:8px }
+.countryCodeField { text-align:center; font-weight:700; padding:12px 8px !important; letter-spacing:0.02em }
+
+.authHelperRow { display:flex; justify-content:space-between; align-items:center; font-size:13px; margin-top:-4px }
+.authFooter { text-align:center; font-size:13.5px; color:var(--muted); border-top:1px solid #edf2f9; padding-top:16px; margin-top:6px }
+.authFooter button { background:none; border:none; color:var(--blue); font-weight:750; cursor:pointer; padding:0 4px; text-decoration:underline }
 .textLink { border:0; background:transparent; color:var(--blue); text-align:left; padding:0}
 .hint { color:var(--muted); font-size:13px; line-height:1.65}
 .bookingTable { border:1px solid var(--line); border-radius:22px; overflow:hidden}
@@ -421,7 +462,7 @@ a.modernChannelCard:hover .channelActionArrow { transform:translateX(5px); color
 .heroGrid { grid-template-columns:1fr; min-height:auto; padding:70px 0 30px}
 .categoryGrid { grid-template-columns:repeat(2,1fr)}
 .infoGrid { grid-template-columns:repeat(2,1fr)}
-.trustPanel,.contactGrid,.contactModernGrid,.authWrap { grid-template-columns:1fr}
+.trustPanel,.contactGrid,.contactModernGrid,.authWrap,.authModernWrap { grid-template-columns:1fr}
 .trustStats { grid-template-columns:1fr 1fr 1fr}
 .appBandInner { flex-direction:column; align-items:flex-start}
 .bookingRow { grid-template-columns:1fr 1fr}

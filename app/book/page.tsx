@@ -3,7 +3,7 @@ import BookingWizard from '@/components/BookingWizard';
 
 export const metadata = {
   title: 'Book a Buddy | Hepki',
-  description: 'Book verified student and professional buddies for on-demand assistance, errands, chores, and campus services.',
+  description: 'Book verified buddies for on-demand assistance, errands, chores, and everyday support.',
 };
 
 export default async function BookPage() {

@@ -132,7 +132,7 @@ export default async function ContactPage() {
                 <span className="guaranteeIcon">💳</span>
                 <div>
                   <strong>Protected Transactions</strong>
-                  <span>Razorpay escrow payments keep your funds safe until completion.</span>
+                  <span>Encrypted Razorpay payments keep your transactions safe and verified.</span>
                 </div>
               </div>
               <div className="guaranteeItem">
@@ -149,8 +149,8 @@ export default async function ContactPage() {
         {/* Quick FAQ / Help strip */}
         <div className="contactFaqBanner">
           <div className="faqBannerContent">
-            <h3>Looking to partner or earn as a student Buddy?</h3>
-            <p>Join hundreds of university students earning flexible income on their own schedules with complete safety.</p>
+            <h3>Looking to partner or earn as a Buddy?</h3>
+            <p>Join hundreds of verified Buddies earning flexible income on their own schedules with complete safety.</p>
           </div>
           <Link href="/become-a-buddy" className="primaryButton">
             Become a Buddy <span className="btnArrow">→</span>
