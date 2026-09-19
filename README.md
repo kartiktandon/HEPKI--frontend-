@@ -31,7 +31,7 @@ The website does not expose admin APIs, provider payouts or provider job-managem
 
 ## Sessions and deployment
 
-The browser calls the same-origin `/api/backend/*` gateway. The server forwards only allowlisted endpoint/method combinations and sends the appropriate user/provider Bearer token. Auth tokens are removed from JSON responses and stored in separate HttpOnly, SameSite=Lax cookies (Secure in production). Mutation requests require a matching Origin. API responses are not cached. No token is stored in localStorage.
+Interactive browser requests call the same-origin `/api/backend/*` gateway. Initial page reads run directly on the server through `lib/api/server.ts`. The server forwards only allowlisted endpoint/method combinations and sends the appropriate user/provider Bearer token. Auth tokens are removed from JSON responses and stored in separate HttpOnly, SameSite=Lax cookies (Secure in production). Mutation requests require a matching Origin. API responses are not cached. No token is stored in localStorage.
 
 Expired protected calls with a `401` code refresh once, then retry once. Concurrent refreshes are serialized in each browser runtime and coalesced on the server for 30 seconds, including failures. The server refresh cache is process-local: deployments with multiple instances must use sticky session routing or a shared refresh coordinator to guarantee single rotation across concurrent tabs/instances.
 
@@ -77,3 +77,19 @@ The following mappings are isolated in the UI/API modules and need confirmation 
 - Booking detail/pricing, provider review and onboarding status response fields need authenticated/example-response confirmation. Unknown statuses render neutrally; missing monetary values are never presented as a made-up total.
 
 No production account, booking, payment, support ticket or provider application was created during implementation.
+
+## Server rendering
+
+Initial catalog, contact and Buddy review content is rendered by Server Components. Home and category catalogs use Suspense to stream their content. Account details, saved addresses, booking lists and booking details are fetched on the server and supplied to interactive components as initial data. Booking categories are also supplied from the server. Existing forms, pagination, OTP flows, Razorpay checkout and status polling remain client-side.
+
+The root layout reads the session server-side. Only selected profile display fields are serialized; access/refresh cookies never become component props. All upstream reads use `cache: 'no-store'`, including private resources. React `cache` deduplicates the profile lookup within a render request only. An expired/unavailable server session falls back to the existing browser refresh flow because Server Components cannot rotate cookies. Successfully seeded resources skip the immediate hydration fetch; explicit retry, navigation to another resource and polling still fetch fresh data.
+
+Pages are rendered on demand; deploying this application requires a Next.js server. SSR removes the browser-only initial data-fetch waterfall, but upstream response time still affects rendering. No end-to-end speed benchmark has been claimed.
+
+With the isolated fixture backend and frontend on port 3002 running (commands above), run:
+
+```bash
+node tests/ssr-smoke.cjs
+```
+
+This verifies actual HTML without executing browser JavaScript: categories, account fields, addresses, booking list/details, guest isolation, token exclusion and error fallback. Its only write is to the fixed loopback fixture API. `npm test` also covers the server request/session helpers.

@@ -2,10 +2,10 @@
 import { FormEvent, useState } from 'react';
 import { api, errorMessage } from '@/lib/api/client';
 import { id, list, record, text, unwrap } from '@/lib/api/models';
-import { useResource } from '@/lib/api/hooks';
+import { useResource, type InitialResource } from '@/lib/api/hooks';
 import { ErrorNotice } from './ApiState';
-export default function AddressManager({ selected, onSelect }: { selected?: string; onSelect?: (id: string) => void }) {
-  const resource = useResource('/api/v1/user/addresses', 'user');
+export default function AddressManager({ selected, onSelect, initial }: { selected?: string; onSelect?: (id: string) => void; initial?: InitialResource }) {
+  const resource = useResource('/api/v1/user/addresses', 'user', 0, initial);
   const [adding, setAdding] = useState(false); const [busy, setBusy] = useState(false); const [error, setError] = useState('');
   const [latitude, setLatitude] = useState(''); const [longitude, setLongitude] = useState('');
   const addresses = list(resource.data, 'addresses');

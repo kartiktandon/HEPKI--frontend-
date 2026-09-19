@@ -2,14 +2,14 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { api, ApiError, errorMessage } from '@/lib/api/client';
-import { useResource } from '@/lib/api/hooks';
+import { useResource, type InitialResource } from '@/lib/api/hooks';
 import { category, id, list, money, record, servicePrice, text, unwrap } from '@/lib/api/models';
 import { payBooking } from '@/lib/api/payment';
 import { useSession } from './SessionProvider';
 import { ErrorNotice, LoginNotice } from './ApiState';
 import AddressManager from './AddressManager';
 const steps = ['Service', 'Booking type', 'Schedule', 'Address', 'Review'];
-export default function BookingWizard() {
+export default function BookingWizard({ initialCatalog }: { initialCatalog?: InitialResource }) {
   const { loading, user } = useSession();
   const [step, setStep] = useState(0); const [categoryId, setCategoryId] = useState(''); const [serviceId, setServiceId] = useState('');
   const [bookingType, setBookingType] = useState('instant'); const [addressId, setAddressId] = useState('');
@@ -20,7 +20,7 @@ export default function BookingWizard() {
   const [uncertain, setUncertain] = useState(false);
   const [createdPackage, setCreatedPackage] = useState(false); const [message, setMessage] = useState(''); const locked = useRef(false);
   useEffect(() => { const params = new URLSearchParams(window.location.search); setCategoryId(params.get('category') || ''); const type = params.get('type'); if (type === 'prebooked' || type === 'monthly_session') setBookingType(type); }, []);
-  const catalog = useResource('/api/v1/user/services/categories');
+  const catalog = useResource('/api/v1/user/services/categories', undefined, 0, initialCatalog);
   const services = useResource(categoryId ? `/api/v1/user/services/categories/${encodeURIComponent(categoryId)}/services` : null);
   const categories = list(catalog.data).map(category); const available = list(services.data, 'services');
   const service = available.find(s => id(s) === serviceId); const allowed = record(service?.allowedBookingTypes);

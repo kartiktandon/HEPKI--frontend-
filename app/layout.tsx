@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { getInitialSession } from '@/lib/api/server';
 import SessionProvider from '@/components/SessionProvider';
 export const metadata: Metadata = { title: { default: 'Hepki', template: '%s | Hepki' }, description: 'Book verified Buddies for flexible on-demand assistance.' };
-export default function RootLayout({ children }: Readonly<{children: React.ReactNode}>) { return <html lang="en"><body><SessionProvider><Header/><main>{children}</main><Footer/></SessionProvider></body></html>; }
+export default async function RootLayout({ children }: Readonly<{children: React.ReactNode}>) { const initialSession = await getInitialSession(); return <html lang="en"><body><SessionProvider initialSession={initialSession}><Header/><main>{children}</main><Footer/></SessionProvider></body></html>; }
