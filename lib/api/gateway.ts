@@ -57,11 +57,13 @@ function json(payload: unknown, status = 200) {
   return NextResponse.json(payload, { status, headers: { 'Cache-Control': 'no-store' } });
 }
 function sameOrigin(request: NextRequest) {
+  const origin = request.headers.get('origin');
+  if (!origin) return false;
   // Next can normalize nextUrl's hostname (e.g. 127.0.0.1 to localhost).
-  // Compare against the actual HTTP Host, retaining the scheme check.
-  const host = request.headers.get('host') || request.nextUrl.host;
+  // Compare against actual HTTP Host, Forwarded Host, or nextUrl origin.
+  const host = request.headers.get('x-forwarded-host') || request.headers.get('host') || request.nextUrl.host;
   const protocol = request.headers.get('x-forwarded-proto') === 'https' ? 'https:' : request.nextUrl.protocol;
-  return request.headers.get('origin') === `${protocol}//${host}`;
+  return origin === `${protocol}//${host}` || origin === request.nextUrl.origin;
 }
 export async function gateway(request: NextRequest, path: string) {
   if (!allowed(path, request.method)) return json({ error: 'Route not available.' }, 404);
@@ -98,8 +100,16 @@ export async function gateway(request: NextRequest, path: string) {
         if (!file || typeof file === 'string' || file.size >= 20 * 1024 * 1024) return json({ error: 'Choose a file smaller than 20 MB.' }, 400);
         body = form;
       } else {
+        const contentLength = Number(request.headers.get('content-length') || 0);
+        if (contentLength > 2 * 1024 * 1024) return json({ error: 'Request body is too large.' }, 413);
+        let parsed: unknown;
+        try {
+          parsed = await request.json();
+        } catch {
+          return json({ error: 'Invalid JSON body provided.' }, 400);
+        }
         headers['Content-Type'] = 'application/json';
-        body = JSON.stringify(await request.json());
+        body = JSON.stringify(parsed);
       }
     }
     const execute = async () => {
@@ -109,9 +119,15 @@ export async function gateway(request: NextRequest, path: string) {
       if (path.endsWith('/invoice') && upstream.ok && upstream.headers.get('content-type')?.includes('application/pdf')) {
         return { status: upstream.status, payload: await upstream.arrayBuffer() };
       }
+      if (upstream.status === 204 || upstream.headers.get('content-length') === '0') {
+        return { status: 204, payload: {} };
+      }
       let payload: unknown;
       try { payload = await upstream.json(); }
-      catch { return { status: upstream.ok ? 502 : upstream.status, payload: { error: upstream.status === 413 ? 'Use a file smaller than 20 MB.' : 'The API returned an unreadable response.' } }; }
+      catch {
+        if (upstream.ok) return { status: upstream.status, payload: {} };
+        return { status: upstream.status, payload: { error: upstream.status === 413 ? 'Use a file smaller than 20 MB.' : 'The API returned an unreadable response.' } };
+      }
       return { status: upstream.status, payload };
     };
     let result;

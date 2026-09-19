@@ -88,3 +88,14 @@ test('recursive auth redaction preserves account data and removes tokens at ever
   assert.equal(response.cookies.get('hb_user_access').value, 'access-secret');
   assert.deepEqual(await response.json(), { success: true, data: { user: { fullName: 'Customer', nested: [{ status: 'active' }] } } });
 });
+test('gateway rejects JSON bodies larger than 2 MB with 413', async () => {
+  const req = request('auth/user/email/login', { headers: { 'content-length': String(3 * 1024 * 1024) } });
+  const res = await gateway(req, 'auth/user/email/login');
+  assert.equal(res.status, 413);
+});
+test('gateway cleanly returns 200/204 on empty upstream success without throwing 502', async () => {
+  global.fetch = async () => new Response(null, { status: 204 });
+  const req = request('api/v1/user/bookings/b1/cancel', { headers: { cookie: 'hb_user_access=token' } });
+  const res = await gateway(req, 'api/v1/user/bookings/b1/cancel');
+  assert.equal(res.status, 200);
+});
