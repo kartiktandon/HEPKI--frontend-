@@ -6,13 +6,36 @@ a { text-decoration:none; color:inherit}
 button,input,select,textarea { font:inherit}
 .container { width:min(1180px,calc(100% - 40px)); margin:auto}
 .narrow { max-width:900px}
-.siteHeader { position:sticky; top:0; z-index:30; background:rgba(255,255,255,.92); backdrop-filter:blur(16px); border-bottom:1px solid rgba(231,235,242,.9)}
-.headerInner { height:76px; display:flex; align-items:center; gap:28px}
-.brand { display:flex; align-items:center; gap:10px; font-weight:800; font-size:20px; margin-right:auto}
-.brand img { object-fit:contain}
-.nav { display:flex; gap:20px; font-size:14px; color:#47536c}
-.nav a:hover { color:var(--blue)}
-.headerActions { display:flex; align-items:center; gap:10px}
+.siteHeader { position:sticky; top:0; z-index:50; background:rgba(255,255,255,.88); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border-bottom:1px solid #edf1f7; transition:background .25s ease,box-shadow .25s ease,border-color .25s ease}
+.siteHeader.isScrolled { background:rgba(255,255,255,.98); box-shadow:0 4px 20px rgba(19,33,59,.06); border-bottom-color:#e2e8f2}
+.headerInner { height:72px; display:flex; align-items:center; gap:36px}
+.brand { display:flex; align-items:center; gap:10px; text-decoration:none; margin-right:auto}
+.brandMark { display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:10px; background:var(--blue); color:white; font-size:22px; font-weight:800; line-height:1}
+.brandName { font-size:21px; font-weight:800; letter-spacing:-.03em; color:var(--ink)}
+.nav { display:flex; align-items:center}
+.navLinks { display:flex; align-items:center; gap:28px}
+.navLink { position:relative; padding:6px 0; font-size:14.5px; font-weight:550; color:#55647e; text-decoration:none; transition:color .18s ease; display:inline-flex; align-items:center}
+.navLink:hover { color:var(--ink)}
+.navLinkActive { color:var(--blue)!important; font-weight:700!important}
+.navLinkUnderline { position:absolute; bottom:-4px; left:0; right:0; height:2.5px; border-radius:2px; background:var(--blue)}
+.mobileBooking { display:none}
+.headerActions { display:flex; align-items:center; gap:14px}
+.loginLink { font-size:14px; font-weight:600; color:#55647e; padding:8px 12px; border-radius:8px; text-decoration:none; transition:color .18s ease}
+.loginLink:hover { color:var(--blue)}
+.userNavGroup { display:flex; align-items:center; gap:10px}
+.userAccountPill { font-size:14px; font-weight:650; color:var(--blue); padding:6px 12px; border-radius:8px; background:#eff4ff; text-decoration:none; transition:background .18s ease}
+.userAccountPill:hover { background:#e2ecff}
+.navLogoutBtn { background:none; border:none; color:var(--muted); font-size:13px; font-weight:550; cursor:pointer; padding:6px 8px; border-radius:6px; transition:color .18s ease}
+.navLogoutBtn:hover { color:#b91c1c}
+.headerCtaBtn { display:inline-flex; align-items:center; justify-content:center; border-radius:10px; padding:10px 18px; font-weight:700; font-size:14px; background:var(--blue); color:white; border:none; text-decoration:none; box-shadow:0 3px 10px rgba(36,96,217,.2); transition:background .18s ease,transform .18s ease,box-shadow .18s ease}
+.headerCtaBtn:hover { background:#1b50bd; transform:translateY(-1px); box-shadow:0 6px 16px rgba(36,96,217,.28)}
+.menuToggle { display:none; flex-direction:column; justify-content:center; align-items:center; width:38px; height:38px; border-radius:9px; background:transparent; border:1px solid #e2e8f0; color:var(--ink); cursor:pointer; padding:7px; gap:4px; transition:background .18s ease}
+.menuToggle:hover { background:#f1f5f9}
+.hamburgerLine { display:block; width:18px; height:2px; border-radius:2px; background:var(--ink); transition:transform .2s ease,opacity .2s ease}
+.menuToggle.isActive .line1 { transform:translateY(6px) rotate(45deg)}
+.menuToggle.isActive .line2 { opacity:0}
+.menuToggle.isActive .line3 { transform:translateY(-6px) rotate(-45deg)}
+.headerError { margin:0; border-radius:0; padding:8px 16px; font-size:13px}
 .primaryButton,.secondaryButton,.ghostButton,.linkButton,.packageButton { display:inline-flex; align-items:center; justify-content:center; border-radius:12px; padding:13px 20px; font-weight:700; border:1px solid transparent; cursor:pointer}
 .primaryButton { background:linear-gradient(135deg,var(--blue),var(--blue2)); color:white; box-shadow:0 4px 12px rgba(36,96,217,.18)}
 .primaryButton.small { padding:11px 17px; font-size:14px}
@@ -444,37 +467,35 @@ button.selectCard:not(:disabled):hover { border-color:#93b0e5}
 
 @media(max-width:980px) {
 .headerInner { position:relative}
-.menuToggle { display:inline-flex; width:42px; height:42px; align-items:center; justify-content:center; background:white; border:1px solid var(--line); border-radius:10px; color:var(--ink); cursor:pointer}
-
-.nav.isOpen { max-height:calc(100dvh - 84px); overflow-y:auto; overscroll-behavior:contain; display:flex; position:absolute; top:100%; left:0; right:0; flex-direction:column; gap:2px; padding:16px; background:white; border:1px solid var(--line); border-radius:0 0 16px 16px; box-shadow:var(--shadow)}
-
-.nav a { padding:12px; border-radius:8px}
-.nav a[aria-current=page] { background:var(--soft)}
-.nav a[aria-current=page]::after { display:none}
-
-.nav .mobileBooking { display:block; color:var(--blue); font-weight:700}
-
+.menuToggle { display:flex}
+.nav { display:none}
+.nav.isOpen { max-height:calc(100dvh - 84px); overflow-y:auto; overscroll-behavior:contain; display:flex; position:absolute; top:100%; left:0; right:0; flex-direction:column; gap:8px; padding:16px; background:rgba(255,255,255,.98); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid #dbe6f6; border-radius:0 0 20px 20px; box-shadow:0 14px 36px rgba(33,54,94,.12); animation:navSlideDown .25s cubic-bezier(0.16, 1, 0.3, 1)}
+@keyframes navSlideDown { 0% { opacity:0; transform:translateY(-10px) } 100% { opacity:1; transform:translateY(0) } }
+.navLinks { flex-direction:column; gap:4px; width:100%}
+.navLink { width:100%; padding:12px 14px; border-radius:10px; font-size:15px; color:var(--ink)}
+.navLink:hover { background:#f1f5f9; color:var(--blue)}
+.navLinkActive { background:#eff4ff!important; color:var(--blue)!important}
+.navLinkActive .navLinkUnderline { display:none}
+.nav .mobileBooking { display:flex; align-items:center; justify-content:space-between; padding:14px; border-radius:12px; background:linear-gradient(135deg,#eef4ff,#dfeaff); color:var(--blue); font-weight:800; font-size:15px; text-decoration:none; margin-top:6px; border:1px solid #c9dcfa}
+.mobileBookingArrow { transition:transform .2s ease}
+.mobileBooking:hover .mobileBookingArrow { transform:translateX(4px)}
 .heroGrid { padding-top:24px; gap:0}
 .heroCopy { max-width:700px}
 .heroVisual { min-height:0; max-width:480px; margin:auto}
 .heroVisual img { max-height:420px; width:auto; max-width:100%}
-
 .authWrap { max-width:600px; gap:28px}
 .authAside { padding-top:0}
 .authAside p { max-width:none}
-
 }
 
 @media(max-width:640px) {
 .container { width:calc(100% - 36px)}
 .section { padding:48px 0}
 .pageTop { padding-top:36px}
-
 .heroCopy { padding:24px 0}
 .heroCopy>p { font-size:16px}
 .hero .ctaRow { gap:10px}
 .hero .ctaRow a { padding:12px 16px; font-size:14px}
-
 .trustRow { gap:10px; font-size:12px}
 .heroVisual { max-width:330px}
 .heroVisual img { max-height:330px}
@@ -483,12 +504,12 @@ button.selectCard:not(:disabled):hover { border-color:#93b0e5}
 .heroFloatCard span { font-size:10px}
 .floatCard1 { top:5%; left:-2%}
 .floatCard2 { bottom:5%; right:-2%}
-
-.headerActions { gap:6px}
-.headerActions .textLink { font-size:12px}
-.brand .brandMark { height:36px; width:36px; font-size:24px}
-
-.headerInner { height:68px}
+.headerActions { gap:8px}
+.headerCtaBtn { display:none}
+.brand .brandMark { height:36px; width:36px; font-size:20px; border-radius:10px}
+.brandName { font-size:19px}
+.headerInner { height:66px}
+.siteHeader.isScrolled .headerInner { height:62px}
 .brand { gap:8px}
 .menuToggle { width:38px; height:38px}
 
