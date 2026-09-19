@@ -202,10 +202,6 @@ export default function AuthPage() {
               </div>
             </div>
           </div>
-
-          <div className="authTrustBadge">
-            <span>✓</span> Trusted by 5,000+ happy customers & families
-          </div>
         </div>
 
         {/* Right Aside: Elevated Auth Card */}
