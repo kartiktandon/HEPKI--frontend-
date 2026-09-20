@@ -191,16 +191,12 @@ export default function NearbyBuddies({ initialAddresses }: { initialAddresses?:
                       </div>
 
                       <div className="nearbyInfo">
-                        <div className="nearbyHeaderRow">
-                          <strong>{name}</strong>
-                          <span className="verifiedShield">✓ Verified</span>
+                          <div className="nearbyHeaderRow">
+                            <strong>{name}</strong>
+                            <span className="verifiedShield">✓ Verified</span>
+                          </div>
+                          <span className="nearbyCity">📍 {city}</span>
                         </div>
-                        <span className="nearbyCity">📍 {city}</span>
-                        <div className="nearbyRatingRow">
-                          <span className="starBadge">★ 4.9</span>
-                          <span className="ratingCount">Highly Rated</span>
-                        </div>
-                      </div>
 
                       <div className="nearbyActions">
                         <Link href="/book" className="nearbyBookBtn">

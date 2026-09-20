@@ -728,7 +728,6 @@ button.selectCard:not(:disabled):hover { border-color:#93b0e5}
 /* Discovery Card Badges & Pills */
 .discoveryCard { position: relative }
 .discoveryTagBadge { position: absolute; top: 12px; right: 12px; z-index: 3; display: inline-flex; align-items: center; gap: 3px; padding: 3px 8px; border-radius: 999px; background: rgba(255, 255, 255, 0.94); color: #c25e00; border: 1px solid #fed7aa; font-size: 11px; font-weight: 800; backdrop-filter: blur(8px); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07) }
-.trendingFlame { font-size: 12px }
 .discoveryMetaRow { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap }
 .discoveryPill { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; letter-spacing: 0.01em }
 .discoveryPill.duration { background: #eff6ff; color: #1e40af; border: 1px solid #dbeafe }
@@ -779,9 +778,6 @@ button.selectCard:not(:disabled):hover { border-color:#93b0e5}
 .nearbyHeaderRow strong { font-size: 16px; color: var(--ink); font-weight: 750; overflow-wrap: anywhere }
 .verifiedShield { font-size: 11px; font-weight: 700; color: #15803d; background: #f0fdf4; padding: 2px 7px; border-radius: 6px; border: 1px solid #bbf7d0 }
 .nearbyCity { font-size: 13px; color: #64748b; font-weight: 500 }
-.nearbyRatingRow { display: flex; align-items: center; gap: 8px; margin-top: 4px }
-.starBadge { font-size: 12px; font-weight: 800; color: #b45309; background: #fef3c7; padding: 2px 7px; border-radius: 6px; border: 1px solid #fde68a }
-.ratingCount { font-size: 12px; color: #8c9bb0; font-weight: 500 }
 .nearbyActions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; flex-shrink: 0 }
 .nearbyBookBtn { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 0 16px; border-radius: 10px; background: linear-gradient(135deg, var(--blue), var(--blue2)); color: white; font-weight: 750; font-size: 13px; text-decoration: none; box-shadow: 0 3px 10px rgba(36, 96, 217, 0.2); transition: all 0.2s ease; white-space: nowrap }
 .nearbyBookBtn:hover { box-shadow: 0 6px 16px rgba(36, 96, 217, 0.32); transform: translateY(-1px) }
@@ -857,34 +853,6 @@ button.selectCard:not(:disabled):hover { border-color:#93b0e5}
 
 .nudgeLink:hover {
   text-decoration: underline;
-}
-
-/* Sign-in prompt banner (kept for NearbyBuddies) */
-.discoveryPromptMini {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 14px 20px;
-  background: linear-gradient(135deg, #f0f7ff 0%, #e8f2fe 100%);
-  border: 1.5px solid #bfdbfe;
-  border-radius: 16px;
-  flex-wrap: wrap;
-  box-shadow: 0 4px 14px rgba(36, 96, 217, 0.05);
-}
-
-.discoveryPromptText {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 13.5px;
-  color: #1e3a8a;
-  line-height: 1.5;
-}
-
-.promptSparkle {
-  font-size: 20px;
-  flex-shrink: 0;
 }
 
 .discoveryPersonalizedPill {
@@ -965,41 +933,6 @@ button.selectCard:not(:disabled):hover { border-color:#93b0e5}
   max-width: 600px;
   margin: 0 auto;
   color: var(--muted);
-  font-size: 14px;
-}
-
-/* Show More / Show Less Toggle */
-.showMoreWrapper {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.showMoreBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 28px;
-  border-radius: 14px;
-  border: 1.5px solid #c7d9f7;
-  background: #f0f6ff;
-  color: #1e40af;
-  font-size: 14px;
-  font-weight: 750;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(30, 64, 175, 0.06);
-}
-
-.showMoreBtn:hover {
-  background: #1e40af;
-  color: #ffffff;
-  border-color: #1e40af;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(30, 64, 175, 0.2);
-}
-
-.expandArrow {
   font-size: 14px;
 }
 
