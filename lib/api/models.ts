@@ -62,3 +62,19 @@ export function recommendationCategory(data: unknown): string | undefined {
     if (categoryId) return categoryId;
   }
 }
+
+/** Extract all unique category IDs from the user's booking history. */
+export function recommendationCategories(data: unknown): string[] {
+  const bookings = list(data, 'bookings');
+  const items = bookings.length ? bookings : list(data);
+  const seen = new Set<string>();
+  const categories: string[] = [];
+  for (const booking of items) {
+    const categoryId = id(booking.categoryId) || id(record(booking.serviceId).categoryId);
+    if (categoryId && !seen.has(categoryId)) {
+      seen.add(categoryId);
+      categories.push(categoryId);
+    }
+  }
+  return categories;
+}

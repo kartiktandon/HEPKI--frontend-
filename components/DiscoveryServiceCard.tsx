@@ -2,9 +2,18 @@ import Link from 'next/link';
 import CategoryImage from './CategoryImage';
 import { id, money, record, safeImage, servicePrice, text, type RecordData } from '@/lib/api/models';
 
-export default function DiscoveryServiceCard({ service }: { service: RecordData }) {
+export default function DiscoveryServiceCard({
+  service,
+  isRecommended,
+  badgeText,
+}: {
+  service: RecordData;
+  isRecommended?: boolean;
+  badgeText?: string;
+}) {
   const category = record(service.categoryId ?? service.category);
   const categoryId = id(service.categoryId) || id(category);
+  const categoryName = text(category.categoryName ?? category.name);
   const images = Array.isArray(service.images) ? service.images.map(record) : [];
   const image = safeImage(service.image ?? service.icon ?? images.find(value => value.isPrimary)?.url ?? images[0]?.url);
   const price = servicePrice(service);
@@ -14,27 +23,34 @@ export default function DiscoveryServiceCard({ service }: { service: RecordData 
     : '';
   const isHourly = service.pricingType === 'hourly';
 
+  const badge = badgeText || (isRecommended ? '⭐ Recommended' : '⚡ Popular');
+
   return (
-    <article className="categoryCard discoveryCard">
+    <article className={`categoryCard discoveryCard ${isRecommended ? 'recommendedHighlight' : ''}`}>
       <div className="categoryImage">
         <CategoryImage src={image} alt={serviceName} />
-        <span className="discoveryTagBadge">
-          <span className="trendingFlame">⚡</span> Popular
+        <span className={`discoveryTagBadge ${isRecommended ? 'tagBadgeRecommended' : ''}`}>
+          {badge}
         </span>
       </div>
       <div className="categoryBody">
         <div className="discoveryMetaRow">
+          {categoryName && (
+            <span className="discoveryCategoryChip">
+              {categoryName}
+            </span>
+          )}
           {minDuration ? (
             <span className="discoveryPill duration">
               ⏱ {minDuration}h min
             </span>
           ) : null}
           <span className="discoveryPill type">
-            {isHourly ? 'Hourly Rate' : 'Fixed Price'}
+            {isHourly ? 'Hourly' : 'Fixed'}
           </span>
         </div>
-        <h3>{serviceName}</h3>
-        <p>{text(service.description, 'Book verified assistance for this service on your preferred schedule.')}</p>
+        <h3 className="discoveryServiceTitle" title={serviceName}>{serviceName}</h3>
+        <p className="discoveryServiceDesc">{text(service.description, 'Book verified assistance for this service on your preferred schedule.')}</p>
         <div className="cardFooter">
           <div className="discoveryPriceCol">
             <span className="discoveryPriceLabel">Starting from</span>

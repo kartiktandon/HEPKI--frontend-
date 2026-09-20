@@ -1,90 +1,140 @@
 'use client';
+
 import Link from 'next/link';
+import { useMemo } from 'react';
 import { useSession } from './SessionProvider';
 import { useResource, type InitialResource } from '@/lib/api/hooks';
 import { ErrorNotice } from './ApiState';
-import { id, list, recommendationCategory } from '@/lib/api/models';
+import { id, list, recommendationCategories, record, text } from '@/lib/api/models';
 import DiscoveryServiceCard from './DiscoveryServiceCard';
 
-export default function RecommendedServices({ initialBookings, initialServices }: { initialBookings?: InitialResource; initialServices?: InitialResource }) {
-  const { user, loading } = useSession();
-  const bookings = useResource(user ? '/api/v1/user/bookings?page=1&limit=10' : null, 'user', 0, initialBookings);
-  const categoryId = recommendationCategory(bookings.data);
-  const services = useResource(user && categoryId ? `/api/v1/user/services?categoryId=${encodeURIComponent(categoryId)}` : null, undefined, 0, initialServices);
-  const matches = list(services.data, 'services');
-  const recommendations = matches.length ? matches : list(services.data);
+const INITIAL_BATCH_COUNT = 6;
 
-  if (loading) {
-    return (
-      <div className="nearbyLoadingBox">
-        <span className="spinner"></span>
-        <p>Loading your recommendations…</p>
-      </div>
-    );
-  }
+export default function RecommendedServices({
+  initialBookings,
+  initialServices,
+}: {
+  initialBookings?: InitialResource;
+  initialServices?: InitialResource;
+}) {
+  const { user, loading: sessionLoading } = useSession();
 
-  if (!user) {
-    return (
-      <div className="discoveryPrompt">
-        <div className="discoveryPromptContent">
-          <div className="discoveryPromptIcon">✨</div>
-          <div>
-            <h3>Personalized Service Recommendations</h3>
-            <p>Sign in to view curated services and smart rebooking suggestions tailored to your history.</p>
-          </div>
-        </div>
-        <div className="discoveryPromptActions">
-          <Link className="primaryButton" href="/auth?next=%2F">
-            Sign In to View <span className="btnArrow">→</span>
-          </Link>
-          <Link className="secondaryButton" href="/categories">
-            Browse All Services
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  const bookings = useResource(user ? '/api/v1/user/bookings?page=1&limit=20' : null, 'user', 0, initialBookings);
+  const services = useResource('/api/v1/user/services?limit=50', undefined, 0, initialServices);
+
+  const rawList = list(services.data, 'services');
+  const allServices = rawList.length ? rawList : list(services.data);
+
+  // Extract all categories user has previously booked
+  const userBookedCategoryIds = useMemo(() => {
+    return new Set(recommendationCategories(bookings.data));
+  }, [bookings.data]);
+
+  // Names of user's booked categories for display badge
+  const userBookedCategoryNames = useMemo(() => {
+    if (!userBookedCategoryIds.size) return [];
+    const names = new Set<string>();
+    for (const s of allServices) {
+      const cat = record(s.categoryId ?? s.category);
+      const catId = id(s.categoryId) || id(cat);
+      if (catId && userBookedCategoryIds.has(catId)) {
+        const catName = text(cat.categoryName ?? cat.name);
+        if (catName) names.add(catName);
+      }
+    }
+    return Array.from(names);
+  }, [allServices, userBookedCategoryIds]);
+
+  // Sort: services from user's booked categories come first
+  const sortedServices = useMemo(() => {
+    if (!userBookedCategoryIds.size) return allServices;
+
+    const prioritized: typeof allServices = [];
+    const others: typeof allServices = [];
+
+    for (const service of allServices) {
+      const cat = record(service.categoryId ?? service.category);
+      const catId = id(service.categoryId) || id(cat);
+      if (catId && userBookedCategoryIds.has(catId)) {
+        prioritized.push(service);
+      } else {
+        others.push(service);
+      }
+    }
+
+    return [...prioritized, ...others];
+  }, [allServices, userBookedCategoryIds]);
+
+  // Show only the initial curated batch — full catalog is at /services
+  const displayedServices = sortedServices.slice(0, INITIAL_BATCH_COUNT);
 
   return (
-    <div className="stack">
+    <div className="stack discoveryStack">
+
+      {/* Subtle sign-in nudge for logged-out users */}
+      {!sessionLoading && !user && (
+        <div className="discoverySignInNudge">
+          <span className="nudgeIcon">✨</span>
+          <span className="nudgeText">
+            <strong>Sign in</strong> to get personalized recommendations based on your booking history.
+          </span>
+          <Link className="nudgeLink" href="/auth?next=%2F">
+            Sign In →
+          </Link>
+        </div>
+      )}
+
+      {/* Personalized pill — shown only when there is booking history */}
+      {!sessionLoading && user && userBookedCategoryNames.length > 0 && (
+        <div className="discoveryPersonalizedPill">
+          <span className="personalizedCheck">✓</span>
+          <span>
+            Showing results personalized for <strong>{userBookedCategoryNames.join(', ')}</strong>
+          </span>
+        </div>
+      )}
+
+      {/* Errors & Loading State */}
       <ErrorNotice message={bookings.error} retry={bookings.reload} />
       <ErrorNotice message={services.error} retry={services.reload} />
 
-      {(bookings.loading || services.loading) && (
+      {services.loading && !allServices.length && (
         <div className="nearbyLoadingBox">
           <span className="spinner"></span>
-          <p>Finding recommended services for you…</p>
+          <p>Loading curated recommendations for you…</p>
         </div>
       )}
 
-      {!bookings.loading && !bookings.error && !categoryId && (
+      {/* Services Grid */}
+      {!services.loading && displayedServices.length > 0 && (
+        <div className="categoryGrid discoveryGrid">
+          {displayedServices.map((service, index) => {
+            const cat = record(service.categoryId ?? service.category);
+            const catId = id(service.categoryId) || id(cat);
+            const isBooked = Boolean(catId && userBookedCategoryIds.has(catId));
+
+            return (
+              <DiscoveryServiceCard
+                key={id(service) || index}
+                service={service}
+                isRecommended={isBooked}
+                badgeText={isBooked ? '⭐ Recommended' : undefined}
+              />
+            );
+          })}
+        </div>
+      )}
+
+      {/* Empty State Fallback */}
+      {!services.loading && !services.error && sortedServices.length === 0 && (
         <div className="discoveryEmptyCard">
-          <span className="emptyCardIcon">💡</span>
-          <h4>No booking history yet</h4>
-          <p>Once you complete your first booking, custom suggestions and favorite services will appear here for fast re-booking.</p>
+          <span className="emptyCardIcon">🔍</span>
+          <h4>No services available right now</h4>
+          <p>Check back soon — new services are being added regularly.</p>
           <Link href="/categories" className="primaryButton small">
-            Explore Categories <span className="btnArrow">→</span>
+            Browse Categories <span className="btnArrow">→</span>
           </Link>
         </div>
-      )}
-
-      {categoryId && !services.loading && !services.error && (
-        recommendations.length ? (
-          <div className="categoryGrid">
-            {recommendations.slice(0, 4).map((service, index) => (
-              <DiscoveryServiceCard key={id(service) || index} service={service} />
-            ))}
-          </div>
-        ) : (
-          <div className="discoveryEmptyCard">
-            <span className="emptyCardIcon">📂</span>
-            <h4>No active services in this category</h4>
-            <p>Check out our other trending categories for everyday assistance.</p>
-            <Link href="/categories" className="secondaryButton">
-              View All Categories
-            </Link>
-          </div>
-        )
       )}
     </div>
   );
