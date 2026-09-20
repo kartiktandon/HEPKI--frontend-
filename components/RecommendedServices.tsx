@@ -30,20 +30,6 @@ export default function RecommendedServices({
     return new Set(recommendationCategories(bookings.data));
   }, [bookings.data]);
 
-  // Names of user's booked categories for display badge
-  const userBookedCategoryNames = useMemo(() => {
-    if (!userBookedCategoryIds.size) return [];
-    const names = new Set<string>();
-    for (const s of allServices) {
-      const cat = record(s.categoryId ?? s.category);
-      const catId = id(s.categoryId) || id(cat);
-      if (catId && userBookedCategoryIds.has(catId)) {
-        const catName = text(cat.categoryName ?? cat.name);
-        if (catName) names.add(catName);
-      }
-    }
-    return Array.from(names);
-  }, [allServices, userBookedCategoryIds]);
 
   // Sort: services from user's booked categories come first
   const sortedServices = useMemo(() => {
@@ -84,15 +70,6 @@ export default function RecommendedServices({
         </div>
       )}
 
-      {/* Personalized pill — shown only when there is booking history */}
-      {!sessionLoading && user && userBookedCategoryNames.length > 0 && (
-        <div className="discoveryPersonalizedPill">
-          <span className="personalizedCheck">✓</span>
-          <span>
-            Showing results personalized for <strong>{userBookedCategoryNames.join(', ')}</strong>
-          </span>
-        </div>
-      )}
 
       {/* Errors & Loading State */}
       <ErrorNotice message={bookings.error} retry={bookings.reload} />
