@@ -18,7 +18,7 @@ export default function HepkiLogo({
     large: { dim: 44, radius: 11, font: '28px', gap: '12px' },
   }[size];
 
-  const textColor = light ? '#ffffff' : '#0f382c';
+  const textColor = light ? '#ffffff' : '#4353ff';
 
   return (
     <span
