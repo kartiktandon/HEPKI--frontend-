@@ -3203,7 +3203,7 @@ a.modernChannelCard:hover .channelActionArrow {
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid var(--line);
     border-radius: 0 0 24px 24px;
-    box-shadow: 0 16px 40px rgba(15, 56, 44, 0.12);
+    box-shadow: 0 16px 40px var(--primary-glow);
     animation: navSlideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
   @keyframes navSlideDown {
@@ -3245,7 +3245,7 @@ a.modernChannelCard:hover .channelActionArrow {
     font-size: 15px;
     text-decoration: none;
     margin-top: 8px;
-    box-shadow: 0 4px 14px rgba(15, 56, 44, 0.2);
+    box-shadow: 0 4px 14px var(--primary-glow);
   }
   .authModernWrap {
     grid-template-columns: 1fr;
@@ -4232,13 +4232,16 @@ a.modernChannelCard:hover .channelActionArrow {
 }
 
 @media (max-width: 900px) {
+  .hero {
+    padding: 24px 0 36px;
+  }
   .heroGrid {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 28px;
   }
   .heroVisual {
     max-width: 100%;
-    min-height: 380px;
+    min-height: auto;
     margin: 0 auto;
     width: 100%;
     -webkit-mask-image: none;
@@ -4246,6 +4249,12 @@ a.modernChannelCard:hover .channelActionArrow {
   }
   .heroVisual::before {
     display: none;
+  }
+  .heroVisual img {
+    max-height: 380px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
   }
   .howItWorksRow {
     grid-template-columns: 1fr;
@@ -4286,22 +4295,138 @@ a.modernChannelCard:hover .channelActionArrow {
 }
 
 @media (max-width: 640px) {
-  .footerMinimalTop {
-    gap: 18px;
-    padding-bottom: 24px;
+  .siteHeader .headerInner {
+    height: 62px;
   }
-  .footerMinimalNav {
-    gap: 14px;
+  .headerBookBtn {
+    display: none;
   }
-  .footerMinimalBottom {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 14px;
-    padding-top: 20px;
+  .headerLoginBtn {
+    padding: 6px 14px;
+    font-size: 13px;
+  }
+  .userAccountPill {
+    padding: 5px 10px;
+    font-size: 12.5px;
+  }
+  .navLogoutBtn {
+    padding: 4px 6px;
+    font-size: 12.5px;
+  }
+
+  /* Hero Section Mobile Polish */
+  .hero {
+    padding: 18px 0 28px;
+  }
+  .heroBadgeRow {
+    margin-bottom: 12px;
+  }
+  .heroPillTag {
+    font-size: 12px;
+    padding: 4px 12px;
+  }
+  .heroTitle {
+    font-size: clamp(28px, 8vw, 36px);
+    line-height: 1.16;
+    letter-spacing: -0.03em;
+    margin: 0 0 14px;
+  }
+  .heroSubtitle {
+    font-size: 14.5px;
+    line-height: 1.5;
+    margin: 0 0 22px;
+  }
+  .heroCtaRow {
+    width: 100%;
+    margin-bottom: 24px;
+  }
+  .heroBookBtn {
+    width: 100%;
+    justify-content: center;
+    padding: 13px 20px;
+    font-size: 15px;
+  }
+  .heroTrustRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 12px;
+    width: 100%;
+  }
+  .heroTrustItem {
+    gap: 8px;
+  }
+  .heroTrustIcon {
+    width: 32px;
+    height: 32px;
+  }
+  .heroTrustIcon svg {
+    width: 16px;
+    height: 16px;
+  }
+  .heroTrustText {
+    font-size: 11.5px;
+    line-height: 1.25;
+  }
+  .heroVisual {
+    min-height: auto;
+  }
+  .heroVisual img {
+    max-height: 260px;
+  }
+  .heroImageWrap {
+    height: 260px;
+    border-radius: 20px;
+  }
+  .heroFloatingCard {
+    left: 10px;
+    right: 10px;
+    bottom: 12px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 12.5px;
+  }
+
+  /* How It Works Mobile */
+  .howItWorksStrip {
+    padding: 24px 0;
+  }
+  .howItWorksHeading h2 {
+    font-size: 22px;
+  }
+  .stepItem {
+    gap: 10px;
+  }
+  .stepNum {
+    font-size: 12px;
+    height: 24px;
+    padding: 2px 8px;
+  }
+  .stepText h3 {
+    font-size: 14.5px;
+  }
+  .stepText p {
+    font-size: 12px;
+  }
+
+  /* Categories Section Mobile */
+  .topCategoriesSection, .popularServicesSection {
+    padding: 28px 0;
+  }
+  .sectionTitle {
+    font-size: 20px;
+  }
+  .sectionSubtitle {
+    font-size: 13px;
+  }
+  .viewAllLink {
+    font-size: 12.5px;
   }
   .topCategoriesGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
+  }
+  .topCategoryCard {
+    border-radius: 14px;
   }
   .topCategoryImgWrap {
     height: 110px;
@@ -4309,19 +4434,144 @@ a.modernChannelCard:hover .channelActionArrow {
     aspect-ratio: unset;
     padding: 8px 10px;
   }
+  .topCategoryBottom {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  .topCategoryIconBadge {
+    width: 26px;
+    height: 26px;
+  }
+  .topCategoryIconBadge svg {
+    width: 14px;
+    height: 14px;
+  }
+  .topCategoryInfo h4 {
+    font-size: 12.5px;
+  }
+  .topCategoryInfo p {
+    font-size: 10.5px;
+  }
+
+  /* Popular Services Mobile */
   .popularServicesGrid {
     grid-template-columns: 1fr;
     gap: 12px;
   }
+  .popularServiceCard {
+    padding: 10px;
+    border-radius: 14px;
+    gap: 10px;
+  }
+  .popularServiceThumb {
+    width: 68px;
+    height: 68px;
+    border-radius: 10px;
+  }
+  .popularServiceTop h4 {
+    font-size: 13px;
+  }
+  .popularServiceTop p {
+    font-size: 11px;
+  }
+  .popularPrice {
+    font-size: 13.5px;
+  }
+
+  /* Safety Banner Mobile */
+  .safetyBannerSection {
+    padding: 24px 0;
+  }
+  .safetyBannerBox {
+    padding: 20px 18px;
+    border-radius: 16px;
+    gap: 18px;
+  }
+  .safetyBannerHeading h3 {
+    font-size: 19px;
+  }
   .safetyBannerFeatures {
     grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  .heroTrustRow {
     gap: 14px;
+  }
+  .safetyFeatureItem {
+    gap: 10px;
+  }
+  .safetyFeatureText strong {
+    font-size: 13px;
+  }
+  .safetyFeatureText span {
+    font-size: 11.5px;
+  }
+
+  /* App Banner Mobile */
+  .appBannerSection {
+    padding: 24px 0 32px;
+  }
+  .appBannerBox {
+    padding: 20px 16px;
+    border-radius: 16px;
+    gap: 16px;
+    text-align: center;
+  }
+  .appBannerContent h3 {
+    font-size: 18px;
+  }
+  .appBannerContent p {
+    font-size: 12.5px;
+  }
+  .appBannerButtons {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+  .appStoreBadgeBtn {
+    width: 100%;
+    justify-content: center;
+    padding: 8px 16px;
+  }
+
+  /* Footer Mobile */
+  .footer {
+    padding: 36px 0 24px !important;
+  }
+  .footerMinimalTop {
+    gap: 16px;
+    padding-bottom: 20px;
+  }
+  .footerBrandTagline {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+  .footerMinimalNav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+  }
+  .footerMinimalLink {
+    font-size: 12.5px;
+  }
+  .footerMinimalBottom {
     flex-direction: column;
     align-items: flex-start;
+    gap: 14px;
+    padding-top: 18px;
   }
+  .footerBottomLeft {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .footerDot {
+    display: none;
+  }
+  .footerCopyright, .footerTrustNotice {
+    font-size: 11.5px;
+  }
+  .footerSocialIcons {
+    gap: 10px;
+  }
+
   .hideMobile {
     display: none;
   }
