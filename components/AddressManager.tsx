@@ -136,14 +136,26 @@ export default function AddressManager({
                     <AddressIcon type={addrType} />
                   </div>
                   <div className="addressCardDetails">
-                    <strong>
-                      {text(address.nickname ?? address.addressType, 'Service Address')}
-                      {Boolean(address.addressType) && <span className="addressBadge badgeType">{text(address.addressType)}</span>}
-                      {address.isDefault === true && <span className="addressBadge badgeDefault">Default</span>}
-                    </strong>
-                    <p>{fullStr}</p>
+                    <div className="addressTitleRow">
+                      <strong className="addressNickname">
+                        {text(address.nickname, text(address.addressType, 'Service Address'))}
+                      </strong>
+                      <div className="addressBadgesGroup">
+                        {Boolean(address.addressType) && (
+                          <span className="addressBadge badgeType">
+                            {text(address.addressType)}
+                          </span>
+                        )}
+                        {address.isDefault === true && (
+                          <span className="addressBadge badgeDefault">
+                            Default
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <p className="addressText">{fullStr}</p>
                     {Boolean(address.contactName) && (
-                      <p style={{ fontSize: '12px', color: 'var(--muted)', marginTop: '3px' }}>
+                      <p className="addressContact">
                         Contact: {text(address.contactName)} {address.contactPhone ? `(${text(address.contactPhone)})` : ''}
                       </p>
                     )}

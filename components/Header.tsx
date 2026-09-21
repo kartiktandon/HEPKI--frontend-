@@ -4,6 +4,7 @@ import { useSession } from './SessionProvider';
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { errorMessage } from '@/lib/api/client';
+import HepkiLogo from './HepkiLogo';
 
 export default function Header() {
   const { user, loading, logout } = useSession();
@@ -58,15 +59,14 @@ export default function Header() {
       </a>
       <div className="container headerInner">
         <Link href="/" className="brand" aria-label="Hepki Home">
-          <span className="brandMark" aria-hidden="true">H</span>
-          <span className="brandName">Hepki</span>
+          <HepkiLogo size="default" />
         </Link>
 
         {/* Clean, airy, modern navigation */}
         <nav id="main-navigation" aria-label="Main navigation" className={`nav ${menuOpen ? 'isOpen' : ''}`}>
           <div className="navLinks">
             {links.map(item => {
-              const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(`${item.href}/`));
               return (
                 <Link
                   key={item.href}
@@ -81,45 +81,47 @@ export default function Header() {
               );
             })}
           </div>
-          <Link className="mobileBooking" href="/book" onClick={() => setMenuOpen(false)}>
-            <span>Book a Buddy</span>
-            <span className="mobileBookingArrow">→</span>
-          </Link>
         </nav>
 
         <div className="headerActions">
-          {!loading &&
-            (user ? (
-              <div className="userNavGroup">
-                <Link className="userAccountPill" href="/account">
-                  Account
-                </Link>
-                <button
-                  className="navLogoutBtn"
-                  disabled={busy}
-                  onClick={async () => {
-                    setBusy(true);
-                    setError('');
-                    try {
-                      await logout();
-                    } catch (e) {
-                      setError(errorMessage(e));
-                    } finally {
-                      setBusy(false);
-                    }
-                  }}
-                >
-                  {busy ? '...' : 'Log out'}
-                </button>
-              </div>
-            ) : (
-              <Link className="loginLink" href="/auth">
+          {!loading && user ? (
+            <div className="userNavGroup">
+              <Link className="headerBookBtn" href="/book">
+                Book a Buddy <span className="btnArrow">→</span>
+              </Link>
+              <Link className="userAccountPill" href="/account">
+                <span className="userDot"></span>
+                Account
+              </Link>
+              <button
+                className="navLogoutBtn"
+                disabled={busy}
+                onClick={async () => {
+                  setBusy(true);
+                  setError('');
+                  try {
+                    await logout();
+                  } catch (e) {
+                    setError(errorMessage(e));
+                  } finally {
+                    setBusy(false);
+                  }
+                }}
+              >
+                {busy ? '...' : 'Log out'}
+              </button>
+            </div>
+          ) : (
+            <div className="authNavGroup">
+              <Link className="headerBookBtn" href="/book">
+                Book a Buddy <span className="btnArrow">→</span>
+              </Link>
+              <Link className="headerLoginBtn" href="/auth">
                 Login
               </Link>
-            ))}
-          <Link className="headerCtaBtn" href="/book">
-            Book a Buddy
-          </Link>
+            </div>
+          )}
+
           <button
             ref={menuButton}
             type="button"
@@ -143,3 +145,5 @@ export default function Header() {
     </header>
   );
 }
+
+

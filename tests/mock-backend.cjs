@@ -15,6 +15,7 @@ http.createServer(async (req, res) => {
   if (path === '/auth/user/logout') return ok({});
   if (path === '/api/v1/user/services/categories') return ok([category]);
   if (path === '/api/v1/user/services/categories/qa-category/services') return ok({ category, services: [service] });
+  if (path === '/api/v1/user/services/popular' || path === '/api/v1/user/services') return ok([service]);
   if (req.headers.authorization !== 'Bearer local-qa-token') return send({ error: 'Test authentication required' }, 401);
   if (path === '/api/v1/user/profile') return ok({ _id: 'qa-user', fullName: 'QA User', email: 'qa@example.test', mobileNumber: '0000000000' });
   if (path === '/api/v1/user/addresses') {

@@ -54,27 +54,3 @@ export function servicePrice(service: RecordData): number | undefined {
   return typeof price === 'number' ? price : undefined;
 }
 
-/** Preserve API order and use the first booking with a known category. */
-export function recommendationCategory(data: unknown): string | undefined {
-  const bookings = list(data, 'bookings');
-  for (const booking of bookings.length ? bookings : list(data)) {
-    const categoryId = id(booking.categoryId) || id(record(booking.serviceId).categoryId);
-    if (categoryId) return categoryId;
-  }
-}
-
-/** Extract all unique category IDs from the user's booking history. */
-export function recommendationCategories(data: unknown): string[] {
-  const bookings = list(data, 'bookings');
-  const items = bookings.length ? bookings : list(data);
-  const seen = new Set<string>();
-  const categories: string[] = [];
-  for (const booking of items) {
-    const categoryId = id(booking.categoryId) || id(record(booking.serviceId).categoryId);
-    if (categoryId && !seen.has(categoryId)) {
-      seen.add(categoryId);
-      categories.push(categoryId);
-    }
-  }
-  return categories;
-}

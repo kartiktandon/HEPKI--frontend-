@@ -11,11 +11,11 @@ import { ErrorNotice, LoginNotice } from './ApiState';
 import AddressManager from './AddressManager';
 
 const WIZARD_STEPS = [
-  { id: 'service', label: 'Service' },
-  { id: 'type', label: 'Booking Type' },
-  { id: 'schedule', label: 'Schedule' },
-  { id: 'address', label: 'Address' },
-  { id: 'review', label: 'Review & Pay' },
+  { id: 'service', label: 'Service', icon: '🛠️' },
+  { id: 'type', label: 'Booking Type', icon: '⚡' },
+  { id: 'schedule', label: 'Schedule', icon: '📅' },
+  { id: 'address', label: 'Address', icon: '📍' },
+  { id: 'review', label: 'Review & Pay', icon: '💳' },
 ] as const;
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
@@ -23,19 +23,21 @@ const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
 const BOOKING_TYPES = [
   {
     value: 'instant',
-    title: 'On-the-Spot',
+    title: 'On-the-Spot Dispatch',
     icon: '⚡',
     badge: 'Fastest Match',
     badgeClass: 'badgeInstant',
-    desc: 'Immediate dispatch. The nearest verified Buddy is matched directly to your address.',
+    desc: 'Immediate dispatch. The closest verified Buddy in your neighborhood is assigned directly to your address.',
+    highlight: 'Matched within minutes',
   },
   {
     value: 'prebooked',
-    title: 'Pre-Book',
+    title: 'Schedule Ahead',
     icon: '📅',
     badge: 'Flexible Slot',
     badgeClass: 'badgePrebook',
-    desc: 'Schedule ahead for a specific date and time that fits your day perfectly.',
+    desc: 'Pick your preferred date and time slot in advance. Guaranteed Buddy arrival on time.',
+    highlight: 'Custom date & time',
   },
   {
     value: 'monthly_session',
@@ -43,14 +45,15 @@ const BOOKING_TYPES = [
     icon: '⭐',
     badge: 'Best Value',
     badgeClass: 'badgeMonthly',
-    desc: 'Recurring sessions with a dedicated Buddy each week and bundled savings.',
+    desc: 'Recurring sessions with a dedicated Buddy each week and bundled savings for ongoing assistance.',
+    highlight: 'Save up to 20%',
   },
 ] as const;
 
 function CheckIcon() {
   return (
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-      <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width="13" height="13" viewBox="0 0 12 12" fill="none">
+      <path d="M2.5 6L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -79,6 +82,17 @@ function LockIcon() {
   );
 }
 
+function CategoryIcon({ name }: { name: string }) {
+  const l = (name || '').toLowerCase();
+  if (l.includes('hosp') || l.includes('medic') || l.includes('companion')) return <span>🏥</span>;
+  if (l.includes('shop') || l.includes('grocer') || l.includes('errand')) return <span>🛒</span>;
+  if (l.includes('gym') || l.includes('fit') || l.includes('workout')) return <span>💪</span>;
+  if (l.includes('pet') || l.includes('dog') || l.includes('cat')) return <span>🐾</span>;
+  if (l.includes('event') || l.includes('party')) return <span>🎉</span>;
+  if (l.includes('overnight') || l.includes('stay')) return <span>🌙</span>;
+  return <span>🤝</span>;
+}
+
 export default function BookingWizard({ initialCatalog }: { initialCatalog?: InitialResource }) {
   const { loading, user } = useSession();
   const [step, setStep] = useState(0);
@@ -94,6 +108,8 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
   const [hours, setHours] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState<'online' | 'cod'>('online');
   const [promoCode, setPromoCode] = useState('');
+  const [promoApplied, setPromoApplied] = useState(false);
+  const [promoMessage, setPromoMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [createdId, setCreatedId] = useState('');
@@ -104,7 +120,10 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    setCategoryId(params.get('category') || '');
+    const cat = params.get('category');
+    if (cat) setCategoryId(cat);
+    const svc = params.get('service');
+    if (svc) setServiceId(svc);
     const type = params.get('type');
     if (type === 'prebooked' || type === 'monthly_session' || type === 'instant') setBookingType(type);
   }, []);
@@ -116,8 +135,38 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
   const service = available.find(s => id(s) === serviceId);
   const monthly = bookingType === 'monthly_session';
 
-  const currentCategoryName = categories.find(c => c.id === categoryId)?.name;
+  const currentCategory = categories.find(c => c.id === categoryId);
+  const currentCategoryName = currentCategory?.name || 'Selected Category';
   const currentRate = service ? servicePrice(service) : undefined;
+
+  // Auto-select single service if only 1 is available
+  useEffect(() => {
+    if (available.length === 1 && !serviceId) {
+      const single = available[0];
+      setServiceId(id(single));
+      setHours(Number(single.minDurationHours || 1));
+    }
+  }, [available, serviceId]);
+
+  // Quick Date presets
+  function setQuickDate(offsetDays: number) {
+    const d = new Date();
+    d.setDate(d.getDate() + offsetDays);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    setDate(`${y}-${m}-${day}`);
+  }
+
+  function applyPromo() {
+    if (!promoCode.trim()) {
+      setPromoMessage('');
+      setPromoApplied(false);
+      return;
+    }
+    setPromoApplied(true);
+    setPromoMessage(`Coupon "${promoCode.trim().toUpperCase()}" applied!`);
+  }
 
   function next() {
     setError('');
@@ -365,39 +414,61 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
             <ErrorNotice message={catalog.error} retry={catalog.reload} />
             {catalog.loading && <p role="status">Loading categories…</p>}
 
-            <label className="formLabel">
-              Service Category
+            {/* Category Dropdown */}
+            <div className="categorySelectionSection">
+              <label htmlFor="bookingCategorySelect" className="sectionSubheading" style={{ display: 'block', marginBottom: '8px' }}>
+                Service Category
+              </label>
               <div className="selectWrapper">
                 <select
+                  id="bookingCategorySelect"
                   className="styledSelect"
                   value={categoryId}
                   onChange={e => {
                     setCategoryId(e.target.value);
                     setServiceId('');
                   }}
+                  aria-label="Choose a service category"
                 >
-                  <option value="">Select a category</option>
+                  <option value="">Choose a category…</option>
                   {categories.map(c => (
                     <option key={c.id} value={c.id}>
                       {c.name}
                     </option>
                   ))}
                 </select>
-                <div className="selectArrow">
+                <div className="selectArrow" aria-hidden="true">
                   <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
               </div>
-            </label>
+            </div>
 
             <ErrorNotice message={services.error} retry={services.reload} />
-            {services.loading && <p role="status">Loading available services…</p>}
 
+            {/* Loading Skeleton */}
+            {services.loading && (
+              <div className="serviceSkeletonGrid">
+                {[1, 2].map(k => (
+                  <div key={k} className="serviceSkeletonCard">
+                    <div className="skeletonLine title" />
+                    <div className="skeletonLine desc" />
+                    <div className="skeletonLine foot" />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Available Services List */}
             {categoryId && !services.loading && (
-              <div style={{ marginTop: '10px' }}>
-                <span className="sectionSubheading">Available Services</span>
-                <div className="optionGrid">
+              <div style={{ marginTop: '16px' }}>
+                <div className="serviceHeadingRow">
+                  <span className="sectionSubheading">Available Services</span>
+                  <span className="serviceCountBadge">{available.length} {available.length === 1 ? 'service' : 'services'}</span>
+                </div>
+
+                <div className="serviceBookingGrid">
                   {available.map(s => {
                     const isSelected = serviceId === id(s);
                     const sPrice = servicePrice(s);
@@ -408,7 +479,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
                       <button
                         type="button"
                         key={id(s)}
-                        className={`selectCard ${isSelected ? 'selected' : ''}`}
+                        className={`serviceSelectCard ${isSelected ? 'selected' : ''}`}
                         onClick={() => {
                           setServiceId(id(s));
                           setHours(minHours);
@@ -421,7 +492,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
                           </span>
                         </div>
 
-                        <p className="serviceCardDesc">{text(s.description)}</p>
+                        <p className="serviceCardDesc">{text(s.description, 'Reliable, verified Buddy support tailored to your schedule.')}</p>
 
                         <div className="serviceCardFooter">
                           <span className="serviceDurationPill">
@@ -440,7 +511,8 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
 
             {categoryId && !services.loading && !services.error && !available.length && (
               <div className="emptyNoticeCard">
-                <p>No services are currently active in this category. Please select another category.</p>
+                <p>No services are currently active in <strong>{currentCategoryName}</strong>.</p>
+                <p style={{ fontSize: '13px', color: 'var(--muted)', marginTop: '4px' }}>Please select another category above to continue.</p>
               </div>
             )}
           </div>
@@ -451,10 +523,10 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
           <div className="stack">
             <div className="wizardStepHeader">
               <h2>Choose How You Want to Book</h2>
-              <p>Select the booking model that best matches your timeline and requirements.</p>
+              <p>Select the dispatch model that best matches your timeline and routine.</p>
             </div>
 
-            <div className="optionGrid three">
+            <div className="bookingTypeGrid">
               {BOOKING_TYPES.map(opt => {
                 const isSelected = bookingType === opt.value;
 
@@ -465,7 +537,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
                     className={`bookingTypeCard ${isSelected ? 'selected' : ''}`}
                     onClick={() => setBookingType(opt.value)}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%' }}>
+                    <div className="bookingTypeCardTop">
                       <div className="bookingTypeIconBox">{opt.icon}</div>
                       <div className="selectIndicator">
                         {isSelected && <CheckIcon />}
@@ -478,6 +550,10 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
 
                     <span className="bookingTypeTitle">{opt.title}</span>
                     <p className="bookingTypeDesc">{opt.desc}</p>
+
+                    <div className="bookingTypeHighlight">
+                      <span>✓ {opt.highlight}</span>
+                    </div>
                   </button>
                 );
               })}
@@ -500,81 +576,155 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
             </div>
 
             {bookingType === 'instant' ? (
-              <div className="infoCalloutCard">
-                <div className="infoCalloutIcon">⚡</div>
-                <div className="infoCalloutContent">
-                  <h4>Instant Buddy Matching Active</h4>
-                  <p>
-                    As soon as you review and confirm your booking, our system will immediately notify the closest verified Buddies in your area.
-                  </p>
-                  <div className="infoBulletRow">
-                    <span className="infoBullet">✓ Real-time status in My Bookings</span>
-                    <span className="infoBullet">✓ Direct contact with assigned Buddy</span>
-                    <span className="infoBullet">✓ 100% Secure Payments</span>
+              <div className="instantMatchCard">
+                <div className="instantMatchHeader">
+                  <div className="instantMatchIconPulse">
+                    <span className="instantMatchIcon">⚡</span>
+                    <span className="instantMatchPulseRing" />
                   </div>
+                  <div className="instantMatchTitleCol">
+                    <div className="instantMatchBadgeRow">
+                      <span className="instantStatusPill">Live Dispatch Ready</span>
+                      <span className="instantEtaPill">⚡ Match within minutes</span>
+                    </div>
+                    <h3>Instant Buddy Matching Active</h3>
+                  </div>
+                </div>
+
+                <p className="instantMatchDesc">
+                  As soon as you review and confirm your booking, our matching engine automatically alerts verified, background-checked Buddies nearest to your location.
+                </p>
+
+                <div className="instantFeaturesList">
+                  <div className="instantFeatureItem">
+                    <div className="instantFeatureIcon">
+                      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <strong>Live GPS & Arrival Tracking</strong>
+                      <span>Follow status in real time in My Bookings</span>
+                    </div>
+                  </div>
+
+                  <div className="instantFeatureItem">
+                    <div className="instantFeatureIcon">
+                      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <strong>Direct In-App Contact</strong>
+                      <span>Coordinate directly with your matched Buddy</span>
+                    </div>
+                  </div>
+
+                  <div className="instantFeatureItem">
+                    <div className="instantFeatureIcon">
+                      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <strong>100% Verified Buddies</strong>
+                      <span>Government ID & background verification guaranteed</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="instantMatchFooter">
+                  <span className="instantMatchFooterHint">
+                    💡 Click <strong>Continue</strong> to select your address and complete your request.
+                  </span>
                 </div>
               </div>
             ) : (
-              <div className="formGrid">
-                {monthly ? (
-                  <label>
-                    Starting Month
-                    <input
-                      type="month"
-                      min={new Date().toISOString().slice(0, 7)}
-                      value={month}
-                      onChange={e => setMonth(e.target.value)}
-                    />
-                  </label>
-                ) : (
-                  <label>
-                    Preferred Date
-                    <input
-                      type="date"
-                      min={new Date().toLocaleDateString('en-CA')}
-                      value={date}
-                      onChange={e => setDate(e.target.value)}
-                    />
-                  </label>
+              <div className="scheduleBox">
+                {bookingType === 'prebooked' && (
+                  <div className="quickDatePresets">
+                    <span className="quickDateLabel">Quick Date:</span>
+                    <button type="button" className="quickDateBtn" onClick={() => setQuickDate(0)}>Today</button>
+                    <button type="button" className="quickDateBtn" onClick={() => setQuickDate(1)}>Tomorrow</button>
+                    <button type="button" className="quickDateBtn" onClick={() => setQuickDate(2)}>In 2 Days</button>
+                  </div>
                 )}
 
-                <label>
-                  Preferred Time Slot
-                  <input
-                    type="time"
-                    value={time}
-                    onChange={e => setTime(e.target.value)}
-                  />
-                </label>
+                <div className="formGrid">
+                  {monthly ? (
+                    <label>
+                      Starting Month
+                      <input
+                        type="month"
+                        min={new Date().toISOString().slice(0, 7)}
+                        value={month}
+                        onChange={e => setMonth(e.target.value)}
+                      />
+                    </label>
+                  ) : (
+                    <label>
+                      Preferred Date
+                      <input
+                        type="date"
+                        min={new Date().toLocaleDateString('en-CA')}
+                        value={date}
+                        onChange={e => setDate(e.target.value)}
+                      />
+                    </label>
+                  )}
+
+                  <label>
+                    Preferred Arrival Time
+                    <input
+                      type="time"
+                      value={time}
+                      onChange={e => setTime(e.target.value)}
+                    />
+                  </label>
+                </div>
               </div>
             )}
 
             {monthly && (
-              <div style={{ marginTop: '18px' }}>
-                <label className="fieldHintLabel">
-                  Hours per session (Min: {Number(service?.minDurationHours || 1)} hrs)
-                  <input
-                    type="number"
-                    min={Number(service?.minDurationHours || 1)}
-                    max="24"
-                    value={hours}
-                    onChange={e => setHours(Number(e.target.value))}
-                    style={{ maxWidth: '240px' }}
-                  />
-                </label>
+              <div className="monthlyConfigBox">
+                <div className="durationCounterRow">
+                  <span className="counterLabel">
+                    Hours per session (Min: {Number(service?.minDurationHours || 1)} hrs)
+                  </span>
+                  <div className="stepperBtnGroup">
+                    <button
+                      type="button"
+                      className="counterBtn"
+                      onClick={() => setHours(h => Math.max(Number(service?.minDurationHours || 1), h - 1))}
+                      disabled={hours <= Number(service?.minDurationHours || 1)}
+                    >
+                      −
+                    </button>
+                    <span className="counterVal">{hours} hr{hours > 1 ? 's' : ''}</span>
+                    <button
+                      type="button"
+                      className="counterBtn"
+                      onClick={() => setHours(h => Math.min(24, h + 1))}
+                      disabled={hours >= 24}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
 
-                <div style={{ marginTop: '16px' }}>
+                <div style={{ marginTop: '18px' }}>
                   <span className="sectionSubheading" style={{ marginBottom: '8px' }}>
                     Recurring Weekly Days
                   </span>
-                  <div className="daysPillGrid">
+                  <div className="dayPicker">
                     {DAY_NAMES.map((d, i) => {
                       const isChecked = days.includes(i);
                       return (
                         <button
                           key={d}
                           type="button"
-                          className={`dayPillBtn ${isChecked ? 'active' : ''}`}
+                          className={`dayPill ${isChecked ? 'active' : ''}`}
                           onClick={() => {
                             if (isChecked) {
                               setDays(days.filter(day => day !== i));
@@ -588,8 +738,8 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
                       );
                     })}
                   </div>
-                  <span className="hint" style={{ fontSize: '13px', color: 'var(--muted)' }}>
-                    Monthly packages are coordinated with dedicated professionals assigned for consistent support.
+                  <span className="hint">
+                    Monthly packages assign dedicated, background-checked professionals for ongoing weekly support.
                   </span>
                 </div>
               </div>
@@ -622,109 +772,125 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
               <p>Review the details below and select your preferred payment method.</p>
             </div>
 
-            {/* Summary Box */}
-            <div className="reviewSummaryBox">
-              <div className="reviewSummaryItem">
-                <span className="reviewSummaryLabel">
-                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                  {monthly ? 'Category / Package' : 'Service'}
+            {/* Comprehensive Order Summary Card */}
+            <div className="summaryCard">
+              <div className="summaryRow">
+                <span className="summaryLabel">
+                  <CategoryIcon name={currentCategoryName} />
+                  Service
                 </span>
-                <span className="reviewSummaryValue">
-                  {monthly ? currentCategoryName : text(service?.serviceName)}
+                <span className="summaryVal">
+                  <strong>{monthly ? currentCategoryName : text(service?.serviceName)}</strong>
+                  <span className="summarySubtext">{currentCategoryName}</span>
                 </span>
               </div>
 
-              <div className="reviewSummaryItem">
-                <span className="reviewSummaryLabel">
+              <div className="summaryRow">
+                <span className="summaryLabel">
+                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  Booking Type
+                </span>
+                <span className="bookingTypeChip">
+                  {monthly ? '⭐ Monthly Package' : bookingType === 'instant' ? '⚡ Instant Dispatch' : '📅 Pre-Booked Slot'}
+                </span>
+              </div>
+
+              <div className="summaryRow">
+                <span className="summaryLabel">
                   <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                   Schedule
                 </span>
-                <span className="reviewSummaryValue">
+                <span className="summaryVal">
                   {monthly
                     ? `${month} · ${time} (${days.map(d => DAY_NAMES[d]).join(', ')})`
                     : bookingType === 'instant'
-                    ? '⚡ Instant Dispatch (Next Available)'
+                    ? '⚡ Immediate Dispatch (Next Available)'
                     : `${date} at ${time}`}
                 </span>
               </div>
 
               {selectedAddress && (
-                <div className="reviewSummaryItem">
-                  <span className="reviewSummaryLabel">
+                <div className="summaryRow">
+                  <span className="summaryLabel">
                     <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     </svg>
                     Service Location
                   </span>
-                  <span className="reviewSummaryValue" style={{ fontSize: '13.5px' }}>
-                    {text(selectedAddress.nickname ?? selectedAddress.addressType, 'Saved Address')}
-                    {selectedAddress.formattedAddress ? ` (${text(selectedAddress.formattedAddress).slice(0, 32)}…)` : ''}
+                  <span className="summaryVal">
+                    <strong>{text(selectedAddress.nickname ?? selectedAddress.addressType, 'Saved Address')}</strong>
+                    {selectedAddress.formattedAddress ? <span className="summarySubtext">{text(selectedAddress.formattedAddress)}</span> : null}
                   </span>
                 </div>
               )}
 
-              <div className="reviewSummaryTotal">
-                <span className="reviewSummaryTotalLabel">Service Rate</span>
-                <span className="reviewSummaryTotalValue">
+              <div className="summaryRow totalRow">
+                <span className="totalLabel">Service Rate</span>
+                <span className="totalVal">
                   {money(currentRate)}
                   {service?.pricingType === 'hourly' ? '/hr' : ''}
                 </span>
               </div>
             </div>
 
-            {/* Secure Payment Guarantee Banner */}
-            <div className="trustPaymentCard">
-              <div className="trustPaymentIcon">🛡️</div>
-              <div className="trustPaymentText">
-                <strong>100% Secure & Protected:</strong> Your payment is processed securely via Razorpay with instant verification and guaranteed verified Buddies.
+            {/* Trust & Guarantee Banner */}
+            <div className="trustBannerCard">
+              <div className="trustBannerIcon">🛡️</div>
+              <div className="trustBannerText">
+                <strong>100% Safe & Guaranteed:</strong> Verified background-checked Buddies, instant cancellation before dispatch, and Razorpay secure payment processing.
               </div>
             </div>
 
             {!monthly && (
               <>
-                {/* Promo Code Input */}
-                <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '13.5px', fontWeight: 700 }}>
-                  Promo code (optional)
+                {/* Promo Code Box */}
+                <div className="promoBox">
+                  <span className="promoLabel">Promo code (optional)</span>
                   <div className="promoInputGroup">
-                    <span className="promoIcon">
-                      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                      </svg>
-                    </span>
+                    <span className="promoIcon" aria-hidden="true">🏷️</span>
                     <input
                       className="promoInput"
                       value={promoCode}
                       onChange={e => setPromoCode(e.target.value)}
-                      placeholder="Enter promo or coupon code"
+                      placeholder="Enter coupon code (e.g. HEPKI50)"
                     />
+                    <button type="button" className="promoApplyBtn" onClick={applyPromo}>
+                      Apply
+                    </button>
                   </div>
-                </label>
+                  {promoMessage && (
+                    <span className={`promoFeedback ${promoApplied ? 'success' : ''}`}>
+                      {promoMessage}
+                    </span>
+                  )}
+                </div>
 
-                {/* Payment Method Toggle Cards */}
-                <div style={{ marginTop: '14px' }}>
-                  <span className="sectionSubheading" style={{ marginBottom: '8px' }}>
+                {/* Payment Method Cards */}
+                <div style={{ marginTop: '16px' }}>
+                  <span className="sectionSubheading" style={{ marginBottom: '10px' }}>
                     Select Payment Method
                   </span>
-                  <div className="paymentCardGrid">
+                  <div className="paymentGrid">
                     <div
                       className={`paymentCard ${paymentMethod === 'online' ? 'selected' : ''}`}
                       onClick={() => setPaymentMethod('online')}
                       role="button"
                       tabIndex={0}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter' || e.key === ' ') setPaymentMethod('online');
+                      }}
                     >
-                      <div>
-                        <div className="paymentCardHeader">
-                          <span className="paymentCardTitle">Online Payment</span>
-                          <div className="selectIndicator">
-                            {paymentMethod === 'online' && <CheckIcon />}
-                          </div>
+                      <div className="paymentCardHeader">
+                        <span className="paymentCardTitle">💳 Online Payment</span>
+                        <div className="selectIndicator">
+                          {paymentMethod === 'online' && <CheckIcon />}
                         </div>
-                        <p className="paymentCardDesc">Pay securely via Razorpay with UPI, Debit/Credit Card, or NetBanking.</p>
                       </div>
+                      <p className="paymentCardDesc">Pay securely via Razorpay with UPI (GPay/PhonePe), Debit/Credit Card, or NetBanking.</p>
                       <div className="paymentBadges">
                         <span className="paymentMiniBadge">UPI</span>
                         <span className="paymentMiniBadge">Cards</span>
@@ -737,16 +903,17 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
                       onClick={() => setPaymentMethod('cod')}
                       role="button"
                       tabIndex={0}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter' || e.key === ' ') setPaymentMethod('cod');
+                      }}
                     >
-                      <div>
-                        <div className="paymentCardHeader">
-                          <span className="paymentCardTitle">Cash on Delivery</span>
-                          <div className="selectIndicator">
-                            {paymentMethod === 'cod' && <CheckIcon />}
-                          </div>
+                      <div className="paymentCardHeader">
+                        <span className="paymentCardTitle">💵 Cash on Delivery</span>
+                        <div className="selectIndicator">
+                          {paymentMethod === 'cod' && <CheckIcon />}
                         </div>
-                        <p className="paymentCardDesc">Pay in cash directly to your Buddy once the service has been completed.</p>
                       </div>
+                      <p className="paymentCardDesc">Pay in cash directly to your Buddy once the service has been completed at your doorstep.</p>
                       <div className="paymentBadges">
                         <span className="paymentMiniBadge">Cash</span>
                         <span className="paymentMiniBadge">Pay Later</span>
@@ -757,7 +924,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
               </>
             )}
 
-            {/* Confirm CTA */}
+            {/* Confirm CTA Button */}
             <button
               type="button"
               className="primaryButton full checkoutBtn"
@@ -772,7 +939,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
                 ) : paymentMethod === 'online' ? (
                   <>
                     <LockIcon />
-                    Confirm Booking & Open Checkout
+                    Confirm Booking & Pay {money(currentRate)}
                   </>
                 ) : (
                   'Confirm Booking (Cash on Delivery)'
