@@ -4060,26 +4060,25 @@ a.modernChannelCard:hover .channelActionArrow {
   color: #ffffff;
 }
 
-/* Modern Clean Footer */
+/* Modern Expanded Footer */
 .footer {
-  background: #ffffff !important;
-  border-top: 1px solid var(--line);
-  padding: 32px 0 !important;
+  background: #fbfdfc !important;
+  border-top: 1px solid #e3ede7;
+  padding: 64px 0 28px !important;
   color: var(--muted) !important;
 }
 
-.footerInner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 28px;
-  flex-wrap: wrap;
+.footerMainGrid {
+  display: grid;
+  grid-template-columns: 2.2fr 1fr 1fr 1fr;
+  gap: 52px;
+  margin-bottom: 48px;
 }
 
-.footerLeft {
+.footerColBrand {
   display: flex;
-  align-items: center;
-  flex-shrink: 0;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .footerBrand {
@@ -4093,31 +4092,122 @@ a.modernChannelCard:hover .channelActionArrow {
   transform: translateY(-1px);
 }
 
-.footerNav {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  flex-wrap: wrap;
+.footerTagline {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: #4f655b;
+  margin: 14px 0 16px;
+  max-width: 320px;
 }
 
-.footerNavLink {
+.footerTrustPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #eaf4ee;
+  border: 1px solid #d1e5d9;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-size: 12.5px;
+  font-weight: 650;
+  color: #0f382c;
+  margin-bottom: 20px;
+}
+
+.footerTrustDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #16a34a;
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
+}
+
+.footerContactQuick {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.footerContactLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #799186;
+  font-weight: 700;
+}
+
+.footerContactEmail {
   font-size: 14px;
-  font-weight: 600;
-  color: var(--muted);
+  color: #0f382c;
+  font-weight: 700;
   text-decoration: none;
   transition: color 0.18s ease;
-  position: relative;
 }
 
-.footerNavLink:hover {
-  color: var(--primary);
+.footerContactEmail:hover {
+  color: #1b5e48;
+  text-decoration: underline;
 }
 
-.footerRight {
+.footerColHeading {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #11291f;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 18px;
+}
+
+.footerLinkList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footerLinkList a {
+  font-size: 14px;
+  font-weight: 500;
+  color: #556c62;
+  text-decoration: none;
+  transition: color 0.18s ease, transform 0.18s ease;
+  display: inline-block;
+}
+
+.footerLinkList a:hover {
+  color: #0f382c;
+  font-weight: 650;
+  transform: translateX(2px);
+}
+
+.footerBottomRow {
+  border-top: 1px solid #e3ede7;
+  padding-top: 24px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 20px;
   flex-wrap: wrap;
+}
+
+.footerBottomLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  color: #799186;
+  flex-wrap: wrap;
+}
+
+.footerDivider {
+  color: #cbdad1;
+}
+
+.footerRegionText {
+  color: #5c756b;
+  font-weight: 500;
 }
 
 .footerSocialIcons {
@@ -4130,27 +4220,27 @@ a.modernChannelCard:hover .channelActionArrow {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: var(--soft);
-  border: 1px solid var(--line);
-  color: var(--muted);
+  background: #ffffff;
+  border: 1px solid #dce8e0;
+  color: #556c62;
   text-decoration: none;
   transition: all 0.2s ease;
 }
 
 .footerSocialLink:hover {
-  background: var(--primary-soft);
-  border-color: var(--primary-soft-border);
-  color: var(--primary);
+  background: #0f382c;
+  border-color: #0f382c;
+  color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(15, 56, 44, 0.08);
+  box-shadow: 0 4px 12px rgba(15, 56, 44, 0.14);
 }
 
 .footerCopyright {
   font-size: 13px;
-  color: var(--muted-light);
+  color: #799186;
   font-weight: 500;
 }
 
@@ -4208,24 +4298,31 @@ a.modernChannelCard:hover .channelActionArrow {
   .appBannerPhone {
     display: none;
   }
-  .footerInner {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 16px;
+  .footerMainGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
   }
-  .footerNav {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 16px;
+  .footerColBrand {
+    grid-column: span 2;
   }
-  .footerRight {
-    flex-direction: column;
-    gap: 12px;
+  .footerTagline {
+    max-width: 100%;
   }
 }
 
 @media (max-width: 640px) {
+  .footerMainGrid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .footerColBrand {
+    grid-column: span 1;
+  }
+  .footerBottomRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
   .topCategoriesGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;

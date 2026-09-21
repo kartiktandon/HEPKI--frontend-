@@ -4,22 +4,72 @@ import HepkiLogo from './HepkiLogo';
 export default function Footer() {
   return (
     <footer className="footer">
-      <div className="container footerInner">
-        <div className="footerLeft">
-          <Link href="/" className="footerBrand" aria-label="Hepki Home">
-            <HepkiLogo size="default" />
-          </Link>
+      <div className="container">
+        {/* Main Footer Multi-Column Grid */}
+        <div className="footerMainGrid">
+          {/* Brand & Mission Column */}
+          <div className="footerColBrand">
+            <Link href="/" className="footerBrand" aria-label="Hepki Home">
+              <HepkiLogo size="default" />
+            </Link>
+            <p className="footerTagline">
+              On-demand verified buddies for medical visits, shopping support, fitness partners, and everyday help.
+            </p>
+            <div className="footerTrustPill">
+              <span className="footerTrustDot"></span>
+              <span>100% Background-Checked Buddies</span>
+            </div>
+            <div className="footerContactQuick">
+              <span className="footerContactLabel">Customer Support</span>
+              <a href="mailto:support@hepki.com" className="footerContactEmail">support@hepki.com</a>
+            </div>
+          </div>
+
+          {/* Categories Column */}
+          <div className="footerCol">
+            <h4 className="footerColHeading">Categories</h4>
+            <ul className="footerLinkList">
+              <li><Link href="/book?category=hospital">Hospital Companion</Link></li>
+              <li><Link href="/book?category=shopping">Shopping Assistant</Link></li>
+              <li><Link href="/book?category=fitness">Fitness & Gym Partner</Link></li>
+              <li><Link href="/book?category=errands">Daily Errands</Link></li>
+              <li><Link href="/categories">View All Categories</Link></li>
+            </ul>
+          </div>
+
+          {/* Company Column */}
+          <div className="footerCol">
+            <h4 className="footerColHeading">Company</h4>
+            <ul className="footerLinkList">
+              <li><Link href="/about">About Hepki</Link></li>
+              <li><Link href="/safety">Safety & Trust</Link></li>
+              <li><Link href="/become-a-buddy">Become a Buddy</Link></li>
+              <li><Link href="/contact">Contact Support</Link></li>
+              <li><Link href="/bookings">My Bookings</Link></li>
+            </ul>
+          </div>
+
+          {/* Trust & Safety Column */}
+          <div className="footerCol">
+            <h4 className="footerColHeading">Trust & Safety</h4>
+            <ul className="footerLinkList">
+              <li><Link href="/safety">Identity Verification</Link></li>
+              <li><Link href="/safety">Emergency SOS & Tracking</Link></li>
+              <li><Link href="/safety">Secure Razorpay Checkout</Link></li>
+              <li><Link href="/about">Community Guidelines</Link></li>
+              <li><Link href="/contact">Help & FAQ</Link></li>
+            </ul>
+          </div>
         </div>
 
-        <nav className="footerNav" aria-label="Footer navigation">
-          <Link href="/categories" className="footerNavLink">Categories</Link>
-          <Link href="/safety" className="footerNavLink">Safety</Link>
-          <Link href="/about" className="footerNavLink">About</Link>
-          <Link href="/contact" className="footerNavLink">Contact</Link>
-          <Link href="/bookings" className="footerNavLink">My Bookings</Link>
-        </nav>
+        {/* Bottom Bar */}
+        <div className="footerBottomRow">
+          <div className="footerBottomLeft">
+            <span className="footerCopyright">© 2025 Hepki Technologies. All rights reserved.</span>
+            <span className="footerDivider">•</span>
+            <span className="footerRegionText">Built with care for safe assistance</span>
+          </div>
 
-        <div className="footerRight">
           <div className="footerSocialIcons">
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="footerSocialLink" aria-label="Instagram">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -47,10 +97,8 @@ export default function Footer() {
               </svg>
             </a>
           </div>
-          <span className="footerCopyright">© 2025 Hepki. All rights reserved.</span>
         </div>
       </div>
     </footer>
   );
 }
-
