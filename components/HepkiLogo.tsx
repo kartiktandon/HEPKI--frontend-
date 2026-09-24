@@ -18,7 +18,7 @@ export default function HepkiLogo({
     large: { dim: 44, radius: 11, font: '28px', gap: '12px' },
   }[size];
 
-  const textColor = light ? '#ffffff' : '#4353ff';
+  const textColor = light ? '#ffffff' : '#0f1d2e';
 
   return (
     <span
@@ -66,13 +66,13 @@ export default function HepkiLogo({
             fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
             fontSize: iconConfig.font,
             fontWeight: 800,
-            letterSpacing: '-0.035em',
+            letterSpacing: '-0.055em',
             color: textColor,
             lineHeight: 1,
             display: 'inline-block',
           }}
         >
-          Hepki
+          HEPKI
         </span>
       )}
     </span>

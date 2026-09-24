@@ -81,7 +81,7 @@ export default async function TopCategories() {
                   <CategoryIcon name={item.name} />
                 </div>
                 <div className="topCategoryInfo">
-                  <h4>{item.name}</h4>
+                  <h3>{item.name}</h3>
                   <p>{item.description || 'Description not available.'}</p>
                 </div>
                 <span className="cardCircleBtn" aria-hidden="true">→</span>

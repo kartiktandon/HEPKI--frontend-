@@ -18,7 +18,7 @@ The default API is production. Submitting forms can create real accounts, bookin
 ## Connected screens
 
 - Home/categories: real category catalog, images and rates, with loading/error/empty states.
-- Login: email login/signup/verification/password reset, mobile login/signup OTP, resend cooldowns, logout and token refresh.
+- Authentication: mobile OTP login/signup, resend cooldowns, logout and token refresh.
 - Account: profile updates and saved address creation/listing.
 - Booking: category services, server-supported instant/prebook/monthly options, service address, booking/package creation, promo code and cash/online payment choices. The server assigns the Buddy; there is no unsupported client-side Buddy selection.
 - Payments: server-generated Razorpay key/order/paise amount, server signature verification, payment-status polling and payment recovery on saved booking details. Checkout dismissal never marks a booking as paid.

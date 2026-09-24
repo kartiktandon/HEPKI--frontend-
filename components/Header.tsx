@@ -36,11 +36,16 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const links = [
-    { href: '/categories', label: 'Categories' },
+  const links = pathname === '/' ? [
+    { href: '/#services', label: 'Services' },
+    { href: '/#how-it-works', label: 'How It Works' },
+    { href: '/#pricing', label: 'Pricing' },
+    { href: '/#become-a-buddy', label: 'Become a Buddy' },
+    { href: '/#faqs', label: 'FAQs' },
+  ] : [
+    { href: '/', label: 'Home' },
+    { href: '/categories', label: 'Services' },
     { href: '/safety', label: 'Safety' },
-    { href: '/about', label: 'About' },
-    { href: '/contact', label: 'Contact' },
     { href: '/bookings', label: 'My Bookings' },
   ];
 
@@ -66,7 +71,8 @@ export default function Header() {
         <nav id="main-navigation" aria-label="Main navigation" className={`nav ${menuOpen ? 'isOpen' : ''}`}>
           <div className="navLinks">
             {links.map(item => {
-              const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(`${item.href}/`));
+              const route = item.href.split('#')[0] || '/';
+              const isActive = item.href === '/' ? pathname === '/' : !item.href.includes('#') && (pathname === route || pathname.startsWith(`${route}/`));
               return (
                 <Link
                   key={item.href}

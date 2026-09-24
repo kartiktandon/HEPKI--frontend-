@@ -5,8 +5,8 @@ import Footer from '@/components/Footer';
 import { getInitialSession } from '@/lib/api/server';
 import SessionProvider from '@/components/SessionProvider';
 export const metadata: Metadata = {
-  title: { default: 'Hepki', template: '%s | Hepki' },
-  description: 'Book verified Buddies for flexible on-demand assistance.',
+  title: { default: 'Hepki — Trusted help for everyday life', template: '%s | Hepki' },
+  description: 'Hepki connects you with verified Buddies for hospital visits, shopping, fitness and everyday assistance.',
   icons: {
     icon: '/assets/hepki-logo.png',
     apple: '/assets/hepki-logo.png',
