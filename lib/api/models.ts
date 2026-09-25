@@ -32,10 +32,23 @@ export function dateLabel(value: unknown, fallback = 'Next available'): string {
 }
 export function bookingSchedule(bookingValue: unknown): { date: string; time: string } {
   const booking = record(bookingValue);
-  const schedule = record(booking.schedule);
+  const schedule = record(booking.schedule ?? booking.bookingSchedule ?? booking.scheduleDetails);
+  const combined = text(
+    booking.scheduledAt ?? booking.scheduledFor ?? booking.scheduleDateTime ??
+    schedule.scheduledAt ?? schedule.scheduledFor ?? schedule.dateTime
+  );
+  const combinedMatch = combined.match(/^(\d{4}-\d{2}-\d{2})(?:[T\s](\d{2}:\d{2}))?/);
   return {
-    date: text(booking.scheduledDate ?? booking.bookingDate ?? booking.serviceDate ?? schedule.date),
-    time: text(booking.timeSlot ?? booking.scheduledTime ?? booking.bookingTime ?? schedule.time),
+    date: text(
+      booking.scheduledDate ?? booking.scheduleDate ?? booking.bookingDate ?? booking.serviceDate ??
+      booking.preferredDate ?? schedule.scheduledDate ?? schedule.scheduleDate ?? schedule.date,
+      combinedMatch?.[1]
+    ),
+    time: text(
+      booking.timeSlot ?? booking.scheduledTime ?? booking.bookingTime ?? booking.serviceTime ??
+      booking.preferredTime ?? schedule.timeSlot ?? schedule.scheduledTime ?? schedule.time,
+      combinedMatch?.[2]
+    ),
   };
 }
 export function label(value: unknown): string {

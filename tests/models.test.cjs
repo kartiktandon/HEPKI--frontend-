@@ -46,6 +46,10 @@ test('booking schedule reads the selected date from supported API response shape
   assert.deepEqual(bookingSchedule({ scheduledDate: '2027-01-02', timeSlot: '10:00' }), { date: '2027-01-02', time: '10:00' });
   assert.deepEqual(bookingSchedule({ bookingDate: '2027-02-03', scheduledTime: '11:30' }), { date: '2027-02-03', time: '11:30' });
   assert.deepEqual(bookingSchedule({ schedule: { date: '2027-03-04', time: '12:45' } }), { date: '2027-03-04', time: '12:45' });
+  assert.deepEqual(bookingSchedule({ scheduleDate: '2027-04-05', serviceTime: '13:15' }), { date: '2027-04-05', time: '13:15' });
+  assert.deepEqual(bookingSchedule({ scheduleDetails: { scheduledDate: '2027-05-06', timeSlot: '14:30' } }), { date: '2027-05-06', time: '14:30' });
+  assert.deepEqual(bookingSchedule({ scheduledAt: '2027-06-07T15:45:00.000Z' }), { date: '2027-06-07', time: '15:45' });
+  assert.deepEqual(bookingSchedule({ bookingSchedule: { scheduledFor: '2027-07-08 16:00' } }), { date: '2027-07-08', time: '16:00' });
   assert.deepEqual(bookingSchedule({}), { date: '', time: '' });
 });
 
