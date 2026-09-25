@@ -26,27 +26,50 @@ export function money(value: unknown): string {
   return typeof value === 'number' && Number.isFinite(value)
     ? currencyFormatter.format(value) : 'Not available';
 }
+function firstText(...values: unknown[]): string {
+  for (const value of values) {
+    const result = text(value).trim();
+    if (result) return result;
+  }
+  return '';
+}
 export function dateLabel(value: unknown, fallback = 'Next available'): string {
-  const raw = text(value, fallback);
+  const raw = firstText(value) || fallback;
   return /^\d{4}-\d{2}-\d{2}/.test(raw) ? raw.slice(0, 10) : raw;
 }
 export function bookingSchedule(bookingValue: unknown): { date: string; time: string } {
   const booking = record(bookingValue);
-  const schedule = record(booking.schedule ?? booking.bookingSchedule ?? booking.scheduleDetails);
-  const combined = text(
-    booking.scheduledAt ?? booking.scheduledFor ?? booking.scheduleDateTime ??
-    schedule.scheduledAt ?? schedule.scheduledFor ?? schedule.dateTime
+  const schedule = record(booking.schedule);
+  const bookingScheduleValue = record(booking.bookingSchedule);
+  const scheduleDetails = record(booking.scheduleDetails);
+  const slot = record(booking.timeSlot);
+  const scheduleSlot = record(schedule.timeSlot);
+  const bookingScheduleSlot = record(bookingScheduleValue.timeSlot);
+  const detailsSlot = record(scheduleDetails.timeSlot);
+  const combined = firstText(
+    booking.scheduledAt, booking.scheduledFor, booking.scheduleDateTime,
+    schedule.scheduledAt, schedule.scheduledFor, schedule.dateTime,
+    bookingScheduleValue.scheduledAt, bookingScheduleValue.scheduledFor, bookingScheduleValue.dateTime,
+    scheduleDetails.scheduledAt, scheduleDetails.scheduledFor, scheduleDetails.dateTime
   );
   const combinedMatch = combined.match(/^(\d{4}-\d{2}-\d{2})(?:[T\s](\d{2}:\d{2}))?/);
   return {
-    date: text(
-      booking.scheduledDate ?? booking.scheduleDate ?? booking.bookingDate ?? booking.serviceDate ??
-      booking.preferredDate ?? schedule.scheduledDate ?? schedule.scheduleDate ?? schedule.date,
+    date: firstText(
+      booking.scheduledDate, booking.scheduleDate, booking.bookingDate, booking.serviceDate,
+      booking.preferredDate, schedule.scheduledDate, schedule.scheduleDate, schedule.date,
+      bookingScheduleValue.scheduledDate, bookingScheduleValue.scheduleDate, bookingScheduleValue.date,
+      scheduleDetails.scheduledDate, scheduleDetails.scheduleDate, scheduleDetails.date,
       combinedMatch?.[1]
     ),
-    time: text(
-      booking.timeSlot ?? booking.scheduledTime ?? booking.bookingTime ?? booking.serviceTime ??
-      booking.preferredTime ?? schedule.timeSlot ?? schedule.scheduledTime ?? schedule.time,
+    time: firstText(
+      booking.timeSlot, booking.scheduledTime, booking.bookingTime, booking.serviceTime, booking.preferredTime,
+      schedule.timeSlot, schedule.scheduledTime, schedule.time,
+      bookingScheduleValue.timeSlot, bookingScheduleValue.scheduledTime, bookingScheduleValue.time,
+      scheduleDetails.timeSlot, scheduleDetails.scheduledTime, scheduleDetails.time,
+      slot.label, slot.startTime, slot.start, slot.from,
+      scheduleSlot.label, scheduleSlot.startTime, scheduleSlot.start, scheduleSlot.from,
+      bookingScheduleSlot.label, bookingScheduleSlot.startTime, bookingScheduleSlot.start, bookingScheduleSlot.from,
+      detailsSlot.label, detailsSlot.startTime, detailsSlot.start, detailsSlot.from,
       combinedMatch?.[2]
     ),
   };

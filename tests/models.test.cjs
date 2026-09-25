@@ -29,6 +29,8 @@ test('unknown statuses and unscheduled bookings retain their display behavior', 
   assert.equal(label('new_backend_status'), 'New Backend Status');
   assert.equal(label('cod'), 'Cash on delivery');
   assert.equal(dateLabel(undefined), 'Next available');
+  assert.equal(dateLabel(''), 'Next available');
+  assert.equal(dateLabel('   ', 'Schedule not available'), 'Schedule not available');
   assert.equal(dateLabel('2026-09-18T10:00:00Z'), '2026-09-18');
 });
 
@@ -50,6 +52,8 @@ test('booking schedule reads the selected date from supported API response shape
   assert.deepEqual(bookingSchedule({ scheduleDetails: { scheduledDate: '2027-05-06', timeSlot: '14:30' } }), { date: '2027-05-06', time: '14:30' });
   assert.deepEqual(bookingSchedule({ scheduledAt: '2027-06-07T15:45:00.000Z' }), { date: '2027-06-07', time: '15:45' });
   assert.deepEqual(bookingSchedule({ bookingSchedule: { scheduledFor: '2027-07-08 16:00' } }), { date: '2027-07-08', time: '16:00' });
+  assert.deepEqual(bookingSchedule({ scheduledDate: '', timeSlot: '', scheduleDetails: { scheduledDate: '2027-08-09', timeSlot: '17:15' } }), { date: '2027-08-09', time: '17:15' });
+  assert.deepEqual(bookingSchedule({ scheduledDate: '2027-09-10', timeSlot: { startTime: '18:30', endTime: '19:30' } }), { date: '2027-09-10', time: '18:30' });
   assert.deepEqual(bookingSchedule({}), { date: '', time: '' });
 });
 
