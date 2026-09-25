@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { api, ApiError, errorMessage } from '@/lib/api/client';
 import { useResource, type InitialResource } from '@/lib/api/hooks';
-import { category, id, list, money, record, servicePrice, text, unwrap } from '@/lib/api/models';
+import { category, dateLabel, id, list, money, record, servicePrice, text, unwrap } from '@/lib/api/models';
 import { payBooking } from '@/lib/api/payment';
 import { useSession } from './SessionProvider';
 import { ErrorNotice, LoginNotice } from './ApiState';
@@ -115,6 +115,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
   const [createdId, setCreatedId] = useState('');
   const [uncertain, setUncertain] = useState(false);
   const [createdPackage, setCreatedPackage] = useState(false);
+  const [onlinePaymentVerified, setOnlinePaymentVerified] = useState(false);
   const [message, setMessage] = useState('');
   const locked = useRef(false);
 
@@ -247,6 +248,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
       if (paymentMethod === 'online') {
         setMessage('Booking initialized. Opening secure checkout…');
         await payBooking(newId);
+        setOnlinePaymentVerified(true);
         setMessage('Payment verified! We are matching you with the nearest verified Buddy.');
       } else {
         setMessage('Your cash booking has been confirmed! Track its live status in My Bookings.');
@@ -307,7 +309,13 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2>{createdPackage ? 'Monthly Package Saved!' : 'Booking Confirmed!'}</h2>
+          <h2>
+            {createdPackage
+              ? 'Monthly Package Saved!'
+              : paymentMethod === 'online' && !onlinePaymentVerified
+                ? 'Payment Pending'
+                : 'Booking Confirmed!'}
+          </h2>
           <p role="status">{message}</p>
           <ErrorNotice message={error} />
 
@@ -323,8 +331,22 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
               </span>
             </div>
             <div className="successSummaryRow">
+              <span style={{ color: 'var(--muted)' }}>Schedule:</span>
+              <strong style={{ color: 'var(--ink)' }}>
+                {monthly
+                  ? `${month} · ${time} (${days.map(day => DAY_NAMES[day]).join(', ')})`
+                  : bookingType === 'instant'
+                    ? 'Immediate dispatch'
+                    : `${dateLabel(date, 'Date not available')} at ${time}`}
+              </strong>
+            </div>
+            <div className="successSummaryRow">
               <span style={{ color: 'var(--muted)' }}>Payment:</span>
-              <strong style={{ color: 'var(--ink)' }}>{paymentMethod === 'online' ? 'Online (Paid / Pending)' : 'Cash on Delivery'}</strong>
+              <strong style={{ color: 'var(--ink)' }}>
+                {paymentMethod === 'online'
+                  ? onlinePaymentVerified ? 'Online (Paid)' : 'Online (Pending)'
+                  : 'Cash on Delivery'}
+              </strong>
             </div>
           </div>
 
@@ -809,7 +831,7 @@ export default function BookingWizard({ initialCatalog }: { initialCatalog?: Ini
                     ? `${month} · ${time} (${days.map(d => DAY_NAMES[d]).join(', ')})`
                     : bookingType === 'instant'
                     ? '⚡ Immediate Dispatch (Next Available)'
-                    : `${date} at ${time}`}
+                    : `${dateLabel(date, 'Date not available')} at ${time}`}
                 </span>
               </div>
 

@@ -1,7 +1,7 @@
 require('./register.cjs');
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { record, unwrap, list, id, money, dateLabel, label, category, servicePrice } = require('../lib/api/models.ts');
+const { record, unwrap, list, id, money, dateLabel, label, category, servicePrice, bookingDisplayStatus, bookingSchedule } = require('../lib/api/models.ts');
 
 test('API readers preserve direct, wrapped and named-list response formats', () => {
   const items = [{ _id: 'one' }, { id: 'two' }];
@@ -30,6 +30,23 @@ test('unknown statuses and unscheduled bookings retain their display behavior', 
   assert.equal(label('cod'), 'Cash on delivery');
   assert.equal(dateLabel(undefined), 'Next available');
   assert.equal(dateLabel('2026-09-18T10:00:00Z'), '2026-09-18');
+});
+
+test('unpaid online bookings are not presented as booked or confirmed', () => {
+  assert.equal(bookingDisplayStatus({ bookingStatus: 'booked', paymentMethod: 'online' }), 'payment_pending');
+  assert.equal(bookingDisplayStatus({ bookingStatus: 'confirmed', payment: { method: 'online', status: 'pending' } }), 'payment_pending');
+  assert.equal(bookingDisplayStatus({ bookingStatus: 'confirmed', payment: { method: 'online' } }, { status: 'pending' }), 'payment_pending');
+  assert.equal(bookingDisplayStatus({ bookingStatus: 'confirmed', paymentMethod: 'online' }, { status: 'failed', method: 'online' }), 'payment_failed');
+  assert.equal(bookingDisplayStatus({ bookingStatus: 'confirmed', paymentMethod: 'online' }, { status: 'paid', method: 'online' }), 'confirmed');
+  assert.equal(bookingDisplayStatus({ bookingStatus: 'confirmed', paymentMethod: 'cod', paymentStatus: 'pending' }), 'confirmed');
+  assert.equal(bookingDisplayStatus({ bookingStatus: 'cancelled_by_user', paymentMethod: 'online', paymentStatus: 'pending' }), 'cancelled_by_user');
+});
+
+test('booking schedule reads the selected date from supported API response shapes', () => {
+  assert.deepEqual(bookingSchedule({ scheduledDate: '2027-01-02', timeSlot: '10:00' }), { date: '2027-01-02', time: '10:00' });
+  assert.deepEqual(bookingSchedule({ bookingDate: '2027-02-03', scheduledTime: '11:30' }), { date: '2027-02-03', time: '11:30' });
+  assert.deepEqual(bookingSchedule({ schedule: { date: '2027-03-04', time: '12:45' } }), { date: '2027-03-04', time: '12:45' });
+  assert.deepEqual(bookingSchedule({}), { date: '', time: '' });
 });
 
 test('category mapping retains primary image, fallback and service-pricing precedence', () => {

@@ -5,7 +5,7 @@ import { useSession } from '@/components/SessionProvider';
 import { ErrorNotice, LoginNotice } from '@/components/ApiState';
 import { api, errorMessage } from '@/lib/api/client';
 import { useResource, type InitialResource } from '@/lib/api/hooks';
-import { dateLabel, id, label, money, record, text, unwrap } from '@/lib/api/models';
+import { bookingDisplayStatus, bookingSchedule, dateLabel, id, label, money, record, text, unwrap } from '@/lib/api/models';
 import { payBooking } from '@/lib/api/payment';
 export default function BookingDetails({ params, initialBooking, initialPayment }: { params: { id: string }; initialBooking?: InitialResource; initialPayment?: InitialResource }) {
   const { user, loading } = useSession(); const path = `/api/v1/user/bookings/${encodeURIComponent(params.id)}`;
@@ -44,7 +44,9 @@ export default function BookingDetails({ params, initialBooking, initialPayment 
       </section>
     );
   }
-  const statusStr = text(booking.bookingStatus);
+  const statusStr = bookingDisplayStatus(booking, payment);
+  const schedule = bookingSchedule(booking);
+  const scheduledDate = dateLabel(schedule.date, 'Schedule not available');
   const bookingNum = text(booking.bookingNumber ?? booking.bookingId, params.id);
   const serviceTitle = text(booking.serviceName ?? record(booking.serviceId).serviceName, 'Service booking');
   const fullAddr = text(address.formattedAddress) || [address.flatNumber, address.society, address.city].map(v => text(v)).filter(Boolean).join(', ') || 'Saved service address';
@@ -62,7 +64,7 @@ export default function BookingDetails({ params, initialBooking, initialPayment 
           <div>
             <span className="bookingIdChip">#{bookingNum}</span>
             <h1 style={{ margin: '4px 0 8px' }}>{serviceTitle}</h1>
-            <p>Scheduled for {dateLabel(booking.scheduledDate)} at {text(booking.timeSlot) || 'flexible time'}</p>
+            <p>Scheduled for {scheduledDate}{schedule.time ? ` at ${schedule.time}` : ''}</p>
           </div>
           <div>
             <span className={`statusPill ${statusStr.toLowerCase()}`}>
@@ -88,7 +90,7 @@ export default function BookingDetails({ params, initialBooking, initialPayment 
               </div>
               <div className="summaryRow">
                 <span>Schedule</span>
-                <strong>{dateLabel(booking.scheduledDate)} {text(booking.timeSlot)}</strong>
+                <strong>{scheduledDate}{schedule.time ? ` at ${schedule.time}` : ''}</strong>
               </div>
               <div className="summaryRow">
                 <span>Payment</span>

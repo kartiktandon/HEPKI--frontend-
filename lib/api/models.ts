@@ -30,9 +30,47 @@ export function dateLabel(value: unknown, fallback = 'Next available'): string {
   const raw = text(value, fallback);
   return /^\d{4}-\d{2}-\d{2}/.test(raw) ? raw.slice(0, 10) : raw;
 }
+export function bookingSchedule(bookingValue: unknown): { date: string; time: string } {
+  const booking = record(bookingValue);
+  const schedule = record(booking.schedule);
+  return {
+    date: text(booking.scheduledDate ?? booking.bookingDate ?? booking.serviceDate ?? schedule.date),
+    time: text(booking.timeSlot ?? booking.scheduledTime ?? booking.bookingTime ?? schedule.time),
+  };
+}
 export function label(value: unknown): string {
   if (value === 'cod') return 'Cash on delivery';
   return text(value, 'Unknown').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+const TERMINAL_BOOKING_STATUSES = new Set([
+  'completed', 'cancelled_by_user', 'cancelled_by_provider', 'cancelled_by_admin', 'failed',
+]);
+
+/**
+ * A booking record can be created before its online payment is completed. Do
+ * not present that record as booked/confirmed until the payment API says it is
+ * paid. This only affects the customer-facing label; the backend remains the
+ * source of truth for the underlying booking status.
+ */
+export function bookingDisplayStatus(bookingValue: unknown, paymentValue?: unknown): string {
+  const booking = record(bookingValue);
+  const embeddedPayment = record(booking.payment);
+  const suppliedPayment = record(paymentValue);
+  const payment = { ...embeddedPayment, ...suppliedPayment };
+  const bookingStatus = text(booking.bookingStatus ?? booking.status, 'pending').toLowerCase();
+  const paymentMethod = text(payment.method ?? booking.paymentMethod).toLowerCase();
+  const paymentStatus = text(payment.status ?? booking.paymentStatus).toLowerCase();
+
+  if (TERMINAL_BOOKING_STATUSES.has(bookingStatus) || paymentMethod === 'cod' || paymentStatus === 'paid') {
+    return bookingStatus;
+  }
+
+  if (paymentMethod === 'online' && ['booked', 'confirmed'].includes(bookingStatus)) {
+    return paymentStatus === 'failed' ? 'payment_failed' : 'payment_pending';
+  }
+
+  return bookingStatus;
 }
 export function safeImage(value: unknown, fallback = '/assets/welcome-hero.png'): string {
   const url = text(value);

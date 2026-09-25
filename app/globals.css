@@ -1090,13 +1090,13 @@ textarea {
   border-color: var(--success-border);
 }
 
-.statusPill.en_route, .statusPill.arrived, .statusPill.in_progress, .statusPill.pending {
+.statusPill.en_route, .statusPill.arrived, .statusPill.in_progress, .statusPill.pending, .statusPill.payment_pending {
   background: var(--amber-soft);
   color: #b45309;
   border-color: var(--amber-border);
 }
 
-.statusPill.cancelled_by_user, .statusPill.cancelled_by_provider, .statusPill.cancelled_by_admin, .statusPill.failed {
+.statusPill.cancelled_by_user, .statusPill.cancelled_by_provider, .statusPill.cancelled_by_admin, .statusPill.failed, .statusPill.payment_failed {
   background: var(--error-soft);
   color: var(--error);
   border-color: var(--error-border);

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useSession } from '@/components/SessionProvider';
 import { ErrorNotice, LoginNotice } from '@/components/ApiState';
 import { useResource, type InitialResource } from '@/lib/api/hooks';
-import { dateLabel, id, label, list, record, text, unwrap } from '@/lib/api/models';
+import { bookingDisplayStatus, bookingSchedule, dateLabel, id, label, list, record, text, unwrap } from '@/lib/api/models';
 export default function BookingsPage({ initial }: { initial?: InitialResource }) {
   const { user, loading } = useSession();
   const [page, setPage] = useState(1);
@@ -58,14 +58,17 @@ export default function BookingsPage({ initial }: { initial?: InitialResource })
               <div className="bookingTable">
                 {items.map(item => {
                   const itemId = id(item);
-                  const statusVal = text(item.bookingStatus ?? item.status);
+                  const statusVal = bookingDisplayStatus(item);
                   const bookingNum = text(item.bookingNumber ?? item.bookingId, itemId);
                   const title = text(
                     item.serviceName ?? record(item.serviceId).serviceName ?? record(item.categoryId).categoryName,
                     tab === 'packages' ? 'Monthly Care Package' : 'Home Service Booking'
                   );
-                  const dateStr = dateLabel(item.scheduledDate ?? item.month);
-                  const timeStr = text(item.timeSlot);
+                  const schedule = bookingSchedule(item);
+                  const dateStr = tab === 'packages'
+                    ? dateLabel(item.month, 'Schedule not available')
+                    : dateLabel(schedule.date, 'Schedule not available');
+                  const timeStr = schedule.time;
 
                   return (
                     <div className="bookingRowCard" key={itemId}>
@@ -74,7 +77,7 @@ export default function BookingsPage({ initial }: { initial?: InitialResource })
                         <h3 className="bookingTitle">{title}</h3>
                       </div>
                       <div className="bookingMetaGroup">
-                        <span><strong>Date:</strong> {dateStr || 'Flexible schedule'}</span>
+                        <span><strong>Date:</strong> {dateStr}</span>
                         {timeStr && <span><strong>Time:</strong> {timeStr}</span>}
                       </div>
                       <div>
