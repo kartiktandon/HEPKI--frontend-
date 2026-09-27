@@ -3325,22 +3325,32 @@ a.modernChannelCard:hover .channelActionArrow {
 .headerBookBtn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
   background: var(--primary);
   color: #ffffff !important;
-  font-size: 14px;
-  font-weight: 700;
-  padding: 9px 22px;
-  border-radius: 9999px;
+  padding: 7px;
+  border-radius: 8px;
   text-decoration: none;
   transition: all 0.18s ease;
   box-shadow: 0 2px 8px rgba(15, 56, 44, 0.15);
+}
+
+.headerBookIcon {
+  display: block;
+  flex-shrink: 0;
+  transition: transform 0.18s ease;
 }
 
 .headerBookBtn:hover {
   background: var(--primary-hover);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(15, 56, 44, 0.22);
+}
+
+.headerBookBtn:hover .headerBookIcon {
+  transform: scale(1.08);
 }
 
 .headerLoginBtn {
@@ -4043,47 +4053,20 @@ a.modernChannelCard:hover .channelActionArrow {
 }
 
 .appBannerButtons {
+  width: min(100%, 274px);
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  gap: 0;
+  position: relative;
+  padding-bottom: 20px;
 }
 
-.appStoreBadgeBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: #000000;
-  color: #ffffff !important;
-  border-radius: 8px;
-  padding: 7px 14px;
-  text-decoration: none;
-  transition: transform 0.18s ease, background 0.18s ease;
-}
-
-.appStoreBadgeBtn:hover {
-  transform: translateY(-2px);
-  background: #1f2937;
-}
-
-.appStoreBadgeText {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-  line-height: 1.1;
-}
-
-.appStoreSmall {
-  font-size: 9px;
-  font-weight: 500;
-  text-transform: uppercase;
-  color: #cbd5e1;
-}
-
-.appStoreLarge {
-  font-size: 13px;
-  font-weight: 700;
-  color: #ffffff;
-}
+.appStoreBadge { display: block; max-width: none; object-fit: contain; }
+.appStoreBadgeApple { width: 120px; height: 40px; }
+.appStoreBadgeGoogle { width: 154px; height: 60px; }
+.appBannerComingSoon { position: absolute; right: 0; bottom: 0; display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.appBannerComingSoon > span { width: 5px; height: 5px; border-radius: 50%; background: var(--amber); }
 
 /* Minimalist Clean Footer */
 .footer {
@@ -4310,7 +4293,9 @@ a.modernChannelCard:hover .channelActionArrow {
     height: 62px;
   }
   .headerBookBtn {
-    display: none;
+    width: 38px;
+    height: 38px;
+    padding: 5px;
   }
   .headerLoginBtn {
     padding: 6px 14px;
@@ -4532,15 +4517,12 @@ a.modernChannelCard:hover .channelActionArrow {
     font-size: 12.5px;
   }
   .appBannerButtons {
-    flex-direction: column;
-    width: 100%;
-    gap: 8px;
+    width: min(100%, 274px);
+    flex-direction: row;
+    gap: 0;
+    padding-bottom: 24px;
   }
-  .appStoreBadgeBtn {
-    width: 100%;
-    justify-content: center;
-    padding: 8px 16px;
-  }
+  .appBannerComingSoon { right: 50%; transform: translateX(50%); white-space: nowrap; }
 
   /* Footer Mobile */
   .footer {
@@ -4785,10 +4767,11 @@ a.modernChannelCard:hover .channelActionArrow {
 .hpPhoneBuddy { margin-top: 24px; padding: 13px; border-radius: 7px; color: var(--hp-green); background: #dfede6; font-size: 9px; font-weight: 750; }
 .hpAppCopy { align-self: center; padding: 65px 75px; }
 .hpAppCopy > p:not(.hpEyebrow) { max-width: 440px; margin: 26px 0 32px; color: #c9e3d8; }
-.hpStoreButtons { display: flex; gap: 11px; }
-.hpStoreButton { min-width: 157px; min-height: 51px; display: flex; align-items: center; gap: 10px; padding: 7px 14px; border-radius: 7px; color: white; background: var(--hp-navy); }
-.hpStoreIcon { font-size: 20px; }.hpStoreButton small, .hpStoreButton strong { display: block; }.hpStoreButton small { font-size: 7px; }.hpStoreButton strong { font-size: 15px; }
-.hpComingNote { display: block; margin-top: 12px; color: #afd4c5; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
+.hpStoreButtons { width: min(100%, 370px); display: flex; align-items: center; gap: 0; margin: -13px 0 0; padding: 0; list-style: none; }
+.hpStoreBadgeItem { min-width: 0; display: flex; align-items: center; justify-content: center; }
+.hpStoreBadgeItemApple { flex: 0 0 43.8%; }
+.hpStoreBadgeItemGoogle { flex: 0 0 56.2%; }
+.hpStoreBadge { width: 100%; height: auto; display: block; object-fit: contain; }
 .hpRefer { padding: 72px 0; background: var(--hp-amber); }
 .hpReferInner { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 36px; }
 .hpReferIcon { width: 78px; height: 78px; display: grid; place-items: center; border: 1px solid rgba(13,29,45,.3); border-radius: 50%; color: var(--hp-green); font-size: 31px; }
@@ -4958,7 +4941,7 @@ a.modernChannelCard:hover .channelActionArrow {
   .hpSafetyGrid { grid-template-columns: 1fr; }.hpSafetyGrid article { min-height: 210px; }
   .hpPricingList { grid-template-columns: 1fr; }.hpPricingList article, .hpPricingList article:nth-child(2n), .hpPricingList article:nth-last-child(-n+2) { min-height: 195px; border-right: 0; border-bottom: 1px solid #dfe0d9; }.hpPricingList article:last-child { border-bottom: 0; }
   .hpCities span { padding: 13px 17px; }
-  .hpApp { padding-inline: 0; }.hpAppCard { width: calc(100% - 30px); }.hpAppMockup { min-height: 445px; }.hpPhone { width: 250px; height: 450px; top: 46px; }.hpAppCopy { padding: 48px 25px; }.hpStoreButtons { flex-direction: column; }.hpStoreButton { width: 175px; }
+  .hpApp { padding-inline: 0; }.hpAppCard { width: calc(100% - 30px); }.hpAppMockup { min-height: 445px; }.hpPhone { width: 250px; height: 450px; top: 46px; }.hpAppCopy { padding: 48px 25px; }.hpStoreButtons { margin-top: -8px; }
   .hpReferInner { grid-template-columns: 1fr; text-align: center; }.hpReferIcon { margin: auto; }.hpRefer .hpEyebrow { justify-content: center; }.hpReferInner .hpButton { grid-column: auto; justify-self: center; }
   .hpBuddyCta { grid-template-columns: 1fr; padding: 28px 23px; }.hpBuddyCta ol { grid-template-columns: 1fr; }.hpBuddyCta .hpButton { grid-column: auto; justify-self: stretch; }
   .hpFaqColumns { grid-template-columns: 1fr; }.hpFaq summary { font-size: 13px; }

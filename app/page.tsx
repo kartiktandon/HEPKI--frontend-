@@ -63,7 +63,20 @@ function Icon({ name, size = 24 }: { name: string; size?: number }) {
 }
 
 function StoreButton({ store }: { store: 'Apple' | 'Google' }) {
-  return <span className="hpStoreButton" aria-label={`${store === 'Apple' ? 'Download on the App Store' : 'Get it on Google Play'} — coming soon`}><span className="hpStoreIcon" aria-hidden="true">{store === 'Apple' ? '●' : '▶'}</span><span><small>{store === 'Apple' ? 'Download on the' : 'GET IT ON'}</small><strong>{store === 'Apple' ? 'App Store' : 'Google Play'}</strong></span></span>;
+  const isApple = store === 'Apple';
+  const label = isApple ? 'Download on the App Store' : 'Get it on Google Play';
+
+  return (
+    <li className={`hpStoreBadgeItem hpStoreBadgeItem${store}`}>
+      <Image
+        className="hpStoreBadge"
+        src={isApple ? '/assets/store-badges/app-store.svg' : '/assets/store-badges/google-play.png'}
+        alt={label}
+        width={isApple ? 120 : 646}
+        height={isApple ? 40 : 250}
+      />
+    </li>
+  );
 }
 
 export default function Home() {
@@ -94,7 +107,7 @@ export default function Home() {
 
       <section className="hpCoverage" aria-labelledby="coverage-title"><div className="hpContainer"><div className="hpCoverageCopy" data-hp-reveal="left"><p className="hpEyebrow hpEyebrowLight">Coverage</p><h2 id="coverage-title">Where we are.</h2><p>Hepki is growing thoughtfully. Availability varies by service and the address entered during booking.</p></div><div className="hpCities" data-hp-reveal-group aria-label="Cities"><span data-hp-reveal>Jaipur</span><span data-hp-reveal>Delhi NCR</span><span data-hp-reveal>Mumbai</span><span data-hp-reveal>Bengaluru</span><span data-hp-reveal>Pune</span><span className="hpComingCity" data-hp-reveal>More coming soon</span></div></div></section>
 
-      <section className="hpSection hpApp" id="download" aria-labelledby="app-title"><div className="hpContainer hpAppCard"><div className="hpAppMockup" data-hp-reveal="left"><div className="hpPhone"><div className="hpPhoneTop" /><div className="hpPhoneScreen"><Image src="/assets/hepki-logo.png" alt="" width={54} height={54} /><strong>Good morning</strong><small>How can we help today?</small><div className="hpPhoneService"><span>Hospital visit</span><span>→</span></div><div className="hpPhoneService"><span>Shopping help</span><span>→</span></div><div className="hpPhoneBuddy"><span className="hpStatusDot" /> Buddies available nearby</div></div></div></div><div className="hpAppCopy" data-hp-reveal="right"><p className="hpEyebrow hpEyebrowLight">Get the app</p><h2 id="app-title">Hepki, in<br /><em>your pocket.</em></h2><p>Book a Buddy, follow your visit and manage every booking from one simple experience.</p><div className="hpStoreButtons"><StoreButton store="Apple" /><StoreButton store="Google" /></div><small className="hpComingNote">Mobile apps coming soon</small></div></div></section>
+      <section className="hpSection hpApp" id="download" aria-labelledby="app-title"><div className="hpContainer hpAppCard"><div className="hpAppMockup" data-hp-reveal="left"><div className="hpPhone"><div className="hpPhoneTop" /><div className="hpPhoneScreen"><Image src="/assets/hepki-logo.png" alt="" width={54} height={54} /><strong>Good morning</strong><small>How can we help today?</small><div className="hpPhoneService"><span>Hospital visit</span><span>→</span></div><div className="hpPhoneService"><span>Shopping help</span><span>→</span></div><div className="hpPhoneBuddy"><span className="hpStatusDot" /> Buddies available nearby</div></div></div></div><div className="hpAppCopy" data-hp-reveal="right"><p className="hpEyebrow hpEyebrowLight">Get the app</p><h2 id="app-title">Hepki, in<br /><em>your pocket.</em></h2><p>Book a Buddy, follow your visit and manage every booking from one simple experience.</p><ul className="hpStoreButtons" aria-label="Hepki mobile apps"><StoreButton store="Apple" /><StoreButton store="Google" /></ul></div></div></section>
 
       <section className="hpRefer"><div className="hpContainer hpReferInner" data-hp-reveal><span className="hpReferIcon" aria-hidden="true">✦</span><div><p className="hpEyebrow">Refer & earn</p><h2>Good help is worth sharing.</h2><p>Invite friends and family to discover trusted everyday assistance with Hepki.</p></div><Link href="/contact" className="hpButton hpButtonDark">Invite Friends <Icon name="arrow" size={17} /></Link></div></section>
 
